@@ -5,6 +5,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     host: process.env.DB_HOST,
     dialect: 'postgres',
     port: parseInt(process.env.DB_PORT),
+    logging: console.log,
 });
 // Test di Connessione al Database
 sequelize.authenticate()
