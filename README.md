@@ -1,70 +1,64 @@
+# Crisma - Gestionale Abbigliamento
 
-# Gestionale Abbigliamento
+## Descrizione Generale
 
-Il Gestionale Abbigliamento è un'applicazione scaricabile e utilizzabile localmente, progettata per la gestione dei capi di abbigliamento. 
-È adatto per fabbriche, aziende di moda e produttori che desiderano organizzare e catalogare i propri prodotti in modo efficiente.
-
-## Funzionalità Principali
-
-- **Gestione Brand e Stagioni:** Creazione e gestione di file legati a brand specifici, stagioni e anni.
-- **Gestione Capi:** Inserimento, modifica e visualizzazione di capi d'abbigliamento con generazione automatica di codici unici.
-- **Esportazione CSV:** Possibilità di esportare l'intero archivio dei capi in formato CSV.
-- **Autenticazione Utente:** Accesso tramite email e password oppure OAuth (Google, Apple).
-- **Database Configurabile:** Supporto per database locali e remoti, con configurazione tramite interfaccia utente.
-
-## Architettura del Progetto
-
-Il progetto è strutturato come una monorepo, con una netta separazione tra frontend e backend:
-
-```
-apps/
-├── be-api                     # Backend (API) - Laravel
-├── fe-app                     # Frontend dell'app gestionale - React, TypeScript, SCSS
-├── fe-site                    # Sito vetrina per il download - React, TypeScript, SCSS
-├── gestionale-capi-fe-app      # Modulo per la gestione dei capi - React, TypeScript, SCSS
-└── shared                     # Componenti e librerie condivise
-```
+Crisma è un gestionale per capi di abbigliamento progettato per offrire una gestione semplice ed efficiente dei capi, dei brand, delle stagioni e degli anni. L'applicazione è scaricabile e utilizzabile in locale dagli utenti, con autenticazione centralizzata tramite un sito vetrina.
 
 ## Tecnologie Utilizzate
 
-### Frontend
-- React con TypeScript per interfaccia interattiva e reattiva.
-- SCSS per la gestione degli stili.
-- OAuth per l'autenticazione tramite Google e Apple.
+* Linguaggio: TypeScript (per tutto il progetto)
+* Build Tool: Vite
+* Backend Framework: Express.js
+* Frontend Framework: React
+* Autenticazione: OAuth tramite sito vetrina (email e password unici)
+* Database: PostgreSQL (solo se necessario)
+* Server: Locale o esterno, gestito dagli utenti tramite interfaccia intuitiva
+* Gestore di pacchetti: npm
+* Architettura: Monorepo
 
-### Backend
-- Laravel per la gestione delle API e della logica applicativa.
-- PostgreSQL per la gestione dei dati.
-- Supporto per database locali e remoti.
+## Struttura della Monorepo
 
-### Deployment
-- Frontend su Vercel.
-- Backend su Railway.
+* **apps/**
 
-## Installazione
+  * **APP/**
 
-1. Clona il repository:
-   ```bash
-   git clone https://github.com/username/gestionale-abbigliamento.git
-   ```
-2. Installa le dipendenze:
-   ```bash
-   cd apps/fe-app
-   npm install
-   cd ../be-api
-   composer install
-   ```
-3. Configura il database tramite interfaccia.
-4. Avvia l'applicazione:
-   ```bash
-   npm start  # Per il frontend
-   php artisan serve  # Per il backend
-   ```
+    * **be-api:** Backend API in Express.js
+    * **fe-app:** Frontend React
+  * **fe-site:** Sito vetrina per autenticazione e download gestionale
+* **shared/**: Moduli condivisi
+* **README.md:** Documentazione generale
 
-## Contributi
+## Flusso di Autenticazione
 
-Contributi, segnalazioni di bug e suggerimenti sono sempre benvenuti. Sentiti libero di aprire una issue o inviare una pull request.
+1. **Registrazione Utente:**
 
-## Licenza
+   * L'utente visita il sito vetrina e crea un account gratuito (email e password unici)
+   * Verifica dell'email tramite codice inviato
+   * I dati vengono salvati nel DB Crisma dedicato
 
-Questo progetto è distribuito sotto la licenza MIT.
+2. **Download e Installazione stile FIGMA:**
+
+   * Dopo la registrazione, l'utente viene invitato a scaricare l'app
+   * L'installazione avviene in locale
+
+3. **Accesso all'App:**
+
+   * L'utente apre l'app e clicca su "Accedi a Crisma"
+   * Viene reindirizzato al sito vetrina per il login
+   * Se l'utente è autenticato, riceve un token e viene riportato all'app
+   * Il token viene salvato localmente per sessioni future
+   * Se effettua il logout, il token viene eliminato e sarà necessario riaccedere
+
+## Ottimizzazioni
+
+* **Sessioni Persistenti:** Utilizzo di JWT con refresh token per mantenere la sessione aperta
+* **Token di Accesso:** Memorizzazione sicura su file di configurazione locale
+* **Verifica Automatica:** Controllo dello stato del token ad ogni avvio dell'app
+* **Logout Unificato:** Logout dal sito vetrina invalida la sessione anche nell'app locale
+* **Interfaccia Utente Intuitiva:** Accesso semplificato tramite pulsante centrale
+
+## Feedback e Prossimi Passi
+
+* Verifica dell’implementazione del flusso descritto
+* Ottimizzazione della gestione dei token
+* Test del processo di autenticazione centralizzata
