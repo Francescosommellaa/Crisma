@@ -7,6 +7,7 @@ const Home: React.FC = () => {
     <>
       <Navbar />
       <Hero />
+      <h1>funziona</h1>
     </>
   );
 };
