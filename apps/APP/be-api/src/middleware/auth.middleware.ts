@@ -13,3 +13,5 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     res.status(401).json({ message: 'Token non valido' });
   }
 };
+
+export default authMiddleware;
