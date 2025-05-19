@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getBrands } from '../../api/brandApi';
+import BrandCard from '../atoms/BrandCard/BrandCard';
+import BrandForm from '../molecules/BrandForm/BrandForm';
 
 interface Brand {
   id: number;
@@ -9,28 +11,37 @@ interface Brand {
 
 const DashboardPage: React.FC = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [showForm, setShowForm] = useState<boolean>(false);
+
+  const fetchBrands = async () => {
+    try {
+      const data = await getBrands();
+      setBrands(data);
+    } catch (error) {
+      console.error('Errore nel recupero dei brand:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const data = await getBrands();
-        setBrands(data);
-      } catch (error) {
-        console.error('Errore nel recupero dei brand:', error);
-      }
-    };
-
     fetchBrands();
   }, []);
+
+  const handleSuccess = () => {
+    fetchBrands();
+  };
 
   return (
     <div>
       <h2>Dashboard - Elenco Brand</h2>
-      <ul>
+      <button onClick={() => setShowForm(true)}>Crea Nuovo Brand</button>
+      {showForm && (
+        <BrandForm onClose={() => setShowForm(false)} onSuccess={handleSuccess} />
+      )}
+      <div className="brand-list">
         {brands.map((brand) => (
-          <li key={brand.id}>{brand.nome} ({brand.abbreviazione})</li>
+          <BrandCard key={brand.id} nome={brand.nome} abbreviazione={brand.abbreviazione} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

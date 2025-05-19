@@ -32,6 +32,7 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "nodemailer": "^7.0.3",
     "pg": "^8.16.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7"
@@ -43,6 +44,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.9",
     "@types/node": "^18.19.100",
+    "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.15.1",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",

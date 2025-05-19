@@ -12,13 +12,15 @@ export const getBrands = async () => {
   }
 };
 
-export const createBrand = async (data: { nome: string; abbreviazione: string }) => {
+export const createBrand = async (nome: string, abbreviazione: string) => {
   try {
-    const response = await axios.post(`${API_URL}/brands`, data);
+    const response = await axios.post(`${API_URL}/brands`, { nome, abbreviazione });
     return response.data;
   } catch (error) {
-    console.error('Errore durante la creazione del brand:', error);
-    throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Errore durante la creazione del brand');
+    }
+    throw new Error('Errore di connessione');
   }
 };
 

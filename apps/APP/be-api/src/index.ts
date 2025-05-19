@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import sequelize from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
@@ -7,6 +8,8 @@ import brandRoutes from './routes/brand.routes.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+app.use(cors());
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
