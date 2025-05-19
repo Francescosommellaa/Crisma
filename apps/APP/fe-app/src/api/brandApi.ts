@@ -7,8 +7,10 @@ export const getBrands = async () => {
     const response = await axios.get(`${API_URL}/brands`);
     return response.data;
   } catch (error) {
-    console.error('Errore nel recupero dei brand:', error);
-    throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Errore durante il recupero dei brand');
+    }
+    throw new Error('Errore di connessione');
   }
 };
 

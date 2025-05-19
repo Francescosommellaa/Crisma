@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createBrand } from '../../../api/brandApi';
+import './BrandForm.scss';
 
 interface BrandFormProps {
   onClose: () => void;

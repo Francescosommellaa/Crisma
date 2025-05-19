@@ -1,4 +1,5 @@
 import React from 'react';
+import './BrandCard.scss';
 
 interface BrandCardProps {
   nome: string;

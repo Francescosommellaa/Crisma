@@ -41,3 +41,4 @@ export const verifyCode = async (email: string, code: string) => {
     throw new Error(handleError(error));
   }
 };
+
