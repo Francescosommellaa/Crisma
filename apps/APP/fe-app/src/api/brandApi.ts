@@ -26,13 +26,15 @@ export const createBrand = async (nome: string, abbreviazione: string) => {
   }
 };
 
-export const updateBrand = async (id: number, data: { nome: string; abbreviazione: string }) => {
+export const updateBrand = async (id: number, nome: string, abbreviazione: string) => {
   try {
-    const response = await axios.put(`${API_URL}/brands/${id}`, data);
+    const response = await axios.put(`${API_URL}/brands/${id}`, { nome, abbreviazione });
     return response.data;
   } catch (error) {
-    console.error('Errore durante l\'aggiornamento del brand:', error);
-    throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Errore durante la modifica del brand');
+    }
+    throw new Error('Errore di connessione');
   }
 };
 
@@ -41,7 +43,9 @@ export const deleteBrand = async (id: number) => {
     const response = await axios.delete(`${API_URL}/brands/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Errore durante l\'eliminazione del brand:', error);
-    throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Errore durante l\'eliminazione del brand');
+    }
+    throw new Error('Errore di connessione');
   }
 };

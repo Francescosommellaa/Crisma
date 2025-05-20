@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { getBrands } from '../../api/brandApi';
-import BrandCard from '../atoms/BrandCard/BrandCard';
-import BrandForm from '../molecules/BrandForm/BrandForm';
+import { getBrands } from '../../../api/brandApi';
+import BrandCard from '../../atoms/BrandCard/BrandCard';
+import BrandForm from '../../molecules/BrandForm/BrandForm';
+import UserMenu from '../../atoms/UserMenu/UserMenu';
+import './DashboardPage.scss';
 
 interface Brand {
   id: number;
@@ -31,16 +33,23 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="dashboard-wrapper">
+       <UserMenu />
       <h2>Dashboard - Elenco Brand</h2>
       <button onClick={() => setShowForm(true)}>Crea Nuovo Brand</button>
       {showForm && (
         <BrandForm onClose={() => setShowForm(false)} onSuccess={handleSuccess} />
       )}
       <div className="brand-list">
-        {brands.map((brand) => (
-          <BrandCard key={brand.id} nome={brand.nome} abbreviazione={brand.abbreviazione} />
-        ))}
+      {brands.map((brand) => (
+  <BrandCard
+    key={brand.id}
+    id={brand.id}
+    nome={brand.nome}
+    abbreviazione={brand.abbreviazione}
+    onUpdate={fetchBrands}
+  />
+))}
       </div>
     </div>
   );

@@ -1,0 +1,23 @@
+.file-form {
+    padding: 1rem;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-top: 1rem;
+    border-radius: 6px;
+  
+    label {
+      font-weight: bold;
+    }
+  
+    input, select {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+    }
+  
+    button {
+      margin-right: 0.5rem;
+    }
+  }
+  

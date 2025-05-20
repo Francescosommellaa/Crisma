@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import sequelize from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import brandRoutes from './routes/brand.routes.js';
+import fileRoutes from './routes/file.routes.js';
+import capoRoutes from './routes/capo.routes.js';
 
 dotenv.config();
 const app = express();
@@ -14,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api', brandRoutes);
+app.use('/api/files', fileRoutes);
+app.use('/api/capi', capoRoutes);
 
 sequelize.sync({ force: true }) 
   .then(() => console.log('✅ Modelli sincronizzati con il database'))

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button from '../atoms/Button';
+import Button from '../atoms/Button/Button';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
