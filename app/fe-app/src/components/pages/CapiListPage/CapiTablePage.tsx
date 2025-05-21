@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 
 //SCSS
@@ -13,21 +13,16 @@ const CapiTablePage: React.FC = () => {
   const { fileId } = useParams();
   const [capi, setCapi] = useState<Capo[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [error, setError] = useState('');
 
-  const fetchCapi = async () => {
-    try {
-      if (!fileId) return;
-      const data = await getCapiByFile(fileId);
-      setCapi(data);
-    } catch (err) {
-      setError('Errore nel caricamento dei capi');
-    }
-  };
-
+  const fetchCapi = useCallback(async () => {
+    if (!fileId) return;
+    const data = await getCapiByFile(Number(fileId));
+    setCapi(data);
+  }, [fileId]);
+  
   useEffect(() => {
     fetchCapi();
-  }, [fileId]);
+  }, [fetchCapi]);
 
   const handleCreateCapo = async (data: CapoFormData) => {
     try {
@@ -52,8 +47,6 @@ const CapiTablePage: React.FC = () => {
           onCancel={() => setShowForm(false)}
         />
       )}
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
 
       <table>
         <thead>
@@ -92,7 +85,7 @@ const CapiTablePage: React.FC = () => {
               <td>{capo.taglia}</td>
               <td>{capo.tm2 || '-'}</td>
               <td>{capo.fornitore || '-'}</td>
-              <td>{capo.fornitore2 || '-'}</td>
+              <td>{capo.fornitoreTex || '-'}</td>
             </tr>
           ))}
         </tbody>

@@ -5,7 +5,6 @@ import path from 'path';
 const FILES_DIR = 'files';
 
 export const getAllFiles = async (req: Request, res: Response) => {
-  // In locale, potremmo leggere tutte le directory ma per ora limitiamoci a un array manuale (estendibile in futuro)
   res.status(200).json({ message: 'Questa rotta verrà estesa con lettura da disco' });
 };
 

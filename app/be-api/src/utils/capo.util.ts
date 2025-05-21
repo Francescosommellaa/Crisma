@@ -1,16 +1,18 @@
-import Capo from '../models/capo.model.js';
-import File from '../models/file.model.js';
+import { readJSON } from '../services/fsService.js';
+import path from 'path';
 
 export const generateCodes = async (
-  fileId: number,
+  fileId: string,
   categoria: string,
   brand: string,
   abbreviazione: string,
   stagione: string,
   anno: string
 ) => {
-  const count = await Capo.count({ where: { fileId } });
-  const progressivo = 1000 + count;
+  const fileDir = path.join('files', fileId);
+  const capi = await readJSON(fileDir, 'capi.json') || [];
+
+  const progressivo = 1000 + capi.length;
 
   const cat = categoria.toUpperCase().substring(0, 3);
   const abbrev = abbreviazione.toUpperCase();
@@ -18,7 +20,7 @@ export const generateCodes = async (
   const year = anno.padStart(2, '0');
 
   const gestionale = `${abbrev}${year}${progressivo}${cat}`;
-  const marka = `${stagione.toUpperCase()}${year}${abbrev}-${progressivo}${cat}`;
+  const marka = `${stagione.toUpperCase()}${year}-${progressivo}${cat}`;
 
   return {
     brand: brandUpper,

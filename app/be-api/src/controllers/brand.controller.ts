@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { readJSON, writeJSON } from '../services/fsService.js';
-import path from 'path';
 
 const BRANDS_FILE = 'brands.json';
 

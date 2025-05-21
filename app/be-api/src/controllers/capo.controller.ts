@@ -1,17 +1,7 @@
 import { Request, Response } from 'express';
 import { readJSON, writeJSON } from '../services/fsService.js';
 import path from 'path';
-
-export const getCapiByFile = async (req: Request, res: Response) => {
-  const { fileId } = req.query;
-
-  if (!fileId) return res.status(400).json({ message: 'fileId richiesto' });
-
-  const fileDir = path.join('files', fileId as string);
-  const capi = await readJSON(fileDir, 'capi.json') || [];
-
-  res.json(capi);
-};
+import { generateCodes } from '../utils/capo.util.js';
 
 export const createCapo = async (req: Request, res: Response) => {
   const {
@@ -41,10 +31,15 @@ export const createCapo = async (req: Request, res: Response) => {
 
   const capi = await readJSON(fileDir, 'capi.json') || [];
 
-  const nextProgressivo = 1000 + capi.length;
-
-  const gestionale = `${metadata.abbreviazione}${metadata.anno}${nextProgressivo}${categoria.toUpperCase()}`;
-  const marka = `${metadata.stagione}${metadata.anno}-${nextProgressivo}${categoria.toUpperCase()}`;
+  // ✅ Genera i codici dinamicamente
+  const { gestionale, marka, brand, abbreviazione } = await generateCodes(
+    fileId,
+    categoria,
+    metadata.nome || metadata.abbreviazione,
+    metadata.abbreviazione,
+    metadata.stagione,
+    metadata.anno
+  );
 
   const nuovoCapo = {
     id: Date.now(),
