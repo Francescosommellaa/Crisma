@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import sequelize from './config/db.js';
-import authRoutes from './routes/auth.routes.js';
+
+// Rotte
 import brandRoutes from './routes/brand.routes.js';
 import fileRoutes from './routes/file.routes.js';
 import capoRoutes from './routes/capo.routes.js';
@@ -14,14 +14,9 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 
 app.use(express.json());
-app.use('/api/auth', authRoutes);
-app.use('/api', brandRoutes);
+app.use('/api/brands', brandRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/capi', capoRoutes);
-
-sequelize.sync({ force: true }) 
-  .then(() => console.log('✅ Modelli sincronizzati con il database'))
-  .catch((err) => console.error('❌ Errore durante la sincronizzazione:', err));
 
 app.listen(PORT, () => {
   console.log(`🌐 Server in esecuzione su http://localhost:${PORT}`);

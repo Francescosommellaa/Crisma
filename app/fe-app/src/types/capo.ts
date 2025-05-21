@@ -1,21 +1,19 @@
 export interface CapoFormData {
-    categoria: string;
-    base: string;
-    descrizione: string;
-    tm: string;
-    prezzo: string;         // sarà convertito a numero nel backend
-    taglia: string;
-    tm2?: string;
-    fornitoreTex?: string;
-    fornitore?: string;
-    prezzo2?: string;       // idem
-    codiceColoreCampione?: string;
-    varianti?: string;
-    pacchetto?: string;
-    fileId: number;
-
-    [key: string]: string | number | undefined;
-  }
+  codiceColoreCampione: string;
+  varianti: string;
+  pacchetto?: string;
+  categoria: string;
+  tm: string;
+  base: string;
+  descrizione: string;
+  prezzo?: string;
+  prezzo2?: string;
+  taglia?: string;
+  tm2?: string;
+  fornitore?: string;
+  fornitore2?: string;
+  fileId: number;
+}
 
   export interface Capo {
     id: number;

@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { getCapiByFile, createCapo } from '../controllers/capo.controller.js';
+import { createCapo, getCapiByFile } from '../controllers/capo.controller.js';
 
 const router = Router();
 
-router.post('/', createCapo);
 router.get('/', getCapiByFile);
+router.post('/', createCapo);
 
 export default router;

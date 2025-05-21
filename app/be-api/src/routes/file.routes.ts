@@ -1,12 +1,16 @@
 import { Router } from 'express';
-import { createFile, getFiles, getFileById, updateFile, deleteFile } from '../controllers/file.controller.js';
+import {
+  createFile,
+  updateFile,
+  deleteFile,
+  getAllFiles
+} from '../controllers/file.controller.js';
 
 const router = Router();
 
+router.get('/', getAllFiles);
 router.post('/', createFile);
-router.get('/', getFiles);
-router.put('/:id', updateFile);
-router.delete('/:id', deleteFile);
-router.get('/:id', getFileById);
+router.put('/:nome', updateFile);
+router.delete('/:nome', deleteFile);
 
 export default router;

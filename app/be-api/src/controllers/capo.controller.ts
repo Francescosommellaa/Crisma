@@ -1,86 +1,73 @@
 import { Request, Response } from 'express';
-import Capo from '../models/capo.model.js';
-import File from '../models/file.model.js';
-import { generateCodes } from '../utils/capo.util.js';
-
-export const createCapo = async (req: Request, res: Response) => {
-  const {
-    categoria,
-    base,
-    descrizione,
-    tm,
-    prezzo,
-    taglia,
-    tm2,
-    fornitoreTex,
-    fornitore,
-    prezzo2,
-    codiceColoreCampione,
-    varianti,
-    pacchetto,
-    fileId
-  } = req.body;
-
-  try {
-    const parsedPrezzo = Number(prezzo);
-    const parsedPrezzo2 = prezzo2 !== '' ? Number(prezzo2) : null;
-
-    if (isNaN(parsedPrezzo)) {
-      return res.status(400).json({ message: 'Prezzo non valido' });
-    }
-
-    const file = await File.findByPk(fileId);
-    if (!file) return res.status(404).json({ message: 'File non trovato' });
-
-    const codes = await generateCodes(
-      fileId,
-      categoria,
-      file.brandAbbreviazione,
-      file.brandAbbreviazione,
-      file.stagione,
-      file.anno
-    );
-
-    const capo = await Capo.create({
-      categoria: categoria.toUpperCase(),
-      base,
-      descrizione,
-      tm,
-      prezzo: parsedPrezzo,
-      prezzo2: parsedPrezzo2,
-      taglia,
-      tm2,
-      fornitoreTex,
-      fornitore,
-      codiceColoreCampione,
-      varianti,
-      pacchetto,
-      fileId,
-      ...codes
-    });
-
-    res.status(201).json(capo);
-  } catch (err) {
-    console.error('Errore nella creazione del capo:', err);
-    res.status(500).json({ message: 'Errore nella creazione del capo' });
-  }
-};
+import { readJSON, writeJSON } from '../services/fsService.js';
+import path from 'path';
 
 export const getCapiByFile = async (req: Request, res: Response) => {
   const { fileId } = req.query;
 
-  if (!fileId) {
-    return res.status(400).json({ message: 'fileId richiesto' });
+  if (!fileId) return res.status(400).json({ message: 'fileId richiesto' });
+
+  const fileDir = path.join('files', fileId as string);
+  const capi = await readJSON(fileDir, 'capi.json') || [];
+
+  res.json(capi);
+};
+
+export const createCapo = async (req: Request, res: Response) => {
+  const {
+    fileId,
+    codiceColoreCampione,
+    varianti,
+    pacchetto,
+    categoria,
+    tm,
+    base,
+    descrizione,
+    prezzo,
+    prezzo2,
+    taglia = 'S',
+    tm2,
+    fornitore,
+    fornitore2
+  } = req.body;
+
+  if (!fileId || !codiceColoreCampione || !varianti || !categoria || !tm || !base || !descrizione) {
+    return res.status(400).json({ message: 'Campi obbligatori mancanti' });
   }
 
-  try {
-    const capi = await Capo.findAll({
-      where: { fileId: Number(fileId) },
-      order: [['id', 'ASC']],
-    });
-    res.json(capi);
+  const fileDir = path.join('files', fileId);
+  const metadata = await readJSON(fileDir, 'metadata.json');
+  if (!metadata) return res.status(404).json({ message: 'File non trovato' });
 
-  } catch (err) {
-    res.status(500).json({ message: 'Errore nel recupero dei capi' });
-  }
+  const capi = await readJSON(fileDir, 'capi.json') || [];
+
+  const nextProgressivo = 1000 + capi.length;
+
+  const gestionale = `${metadata.abbreviazione}${metadata.anno}${nextProgressivo}${categoria.toUpperCase()}`;
+  const marka = `${metadata.stagione}${metadata.anno}-${nextProgressivo}${categoria.toUpperCase()}`;
+
+  const nuovoCapo = {
+    id: Date.now(),
+    gestionale,
+    codiceColoreCampione,
+    varianti,
+    pacchetto,
+    marka,
+    categoria,
+    tm,
+    base,
+    descrizione,
+    prezzo,
+    prezzo2,
+    taglia,
+    tm2,
+    fornitore,
+    fornitore2,
+    createdAt: new Date().toISOString()
+  };
+
+  capi.push(nuovoCapo);
+  await writeJSON(capi, fileDir, 'capi.json');
+
+  res.status(201).json(nuovoCapo);
 };

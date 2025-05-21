@@ -1,38 +1,22 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginPage from '../components/pages/LoginPage';
-import DashboardPage from '../components/pages/DashboardPage/DashboardPage';
-import RegisterPage from '../components/pages/RegisterPage';
-import VerifyCodePage from '../components/pages/VerifyCodePage';
-import BackButton from '../components/atoms/BackButton/BackButton';
-import FileListPage from '../components/pages/FileListPage';
-import CapiListPage from '../components/pages/CapiListPage/CapiListPage';
 
+// Pages
+import WelcomePage from '../components/pages/WelcomePage/WelcomePage';
+import BrandListPage from '../components/pages/BrandListPage/BrandListPage';
+import FileListPage from '../components/pages/FileListPage/FileListPage';
+import CapiTablePage from '../components/pages/CapiListPage/CapiTablePage';
+
+// Atoms
+import Button from '../components/atoms/Button/Button';
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-      <Route path="/" element={
-              <LoginPage />
-          }
-        />
-        <Route path="/register" element={
-            <>
-              <BackButton />
-              <RegisterPage />
-            </>
-          } 
-        />
-        <Route path="/verify" element={
-            <>
-              <BackButton />
-              <VerifyCodePage />
-            </>
-          }
-        />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/brands/:abbreviazione/files" element={<><FileListPage /><BackButton /></>} />
-        <Route path="/files/:fileId/capi" element={<><BackButton /><CapiListPage /></>} />
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/brands" element={<BrandListPage />} />
+        <Route path="/brands/:abbreviazione/files" element={<><Button label='Torna ai Brand' onClick={() => window.history.back()}/><FileListPage /></>} />
+        <Route path="/files/:fileId/capi" element={<><Button label='Torna ai File' onClick={() => window.history.back()} /><CapiTablePage /></>} />
       </Routes>
     </Router>
   );

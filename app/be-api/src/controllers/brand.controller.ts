@@ -1,65 +1,72 @@
 import { Request, Response } from 'express';
-import Brand from '../models/brand.model.js';
+import { readJSON, writeJSON } from '../services/fsService.js';
+import path from 'path';
 
-// Crea un nuovo brand
-export const createBrand = async (req: Request, res: Response) => {
+const BRANDS_FILE = 'brands.json';
+
+const getAllBrands = async (req: Request, res: Response) => {
+  const brands = (await readJSON(BRANDS_FILE)) || [];
+  res.json(brands);
+};
+
+const createBrand = async (req: Request, res: Response) => {
   const { nome, abbreviazione } = req.body;
 
-  try {
-    const brand = await Brand.create({ nome, abbreviazione });
-    res.status(201).json({ message: 'Brand creato con successo', brand });
-  } catch (error) {
-    console.error('Errore durante la creazione del brand:', error);
-    res.status(500).json({ message: 'Errore durante la creazione del brand' });
+  if (!nome || !abbreviazione) {
+    return res.status(400).json({ message: 'Nome e abbreviazione sono obbligatori' });
   }
+
+  const brands = (await readJSON(BRANDS_FILE)) || [];
+
+  // Evita duplicati
+  const exists = brands.find((b: any) => b.abbreviazione === abbreviazione);
+  if (exists) {
+    return res.status(400).json({ message: 'Abbreviazione già esistente' });
+  }
+
+  const newBrand = {
+    id: Date.now(),
+    nome,
+    abbreviazione,
+    createdAt: new Date().toISOString()
+  };
+
+  brands.push(newBrand);
+  await writeJSON(brands, BRANDS_FILE);
+  res.status(201).json(newBrand);
 };
 
-// Ottieni tutti i brand
-export const getBrands = async (req: Request, res: Response) => {
-  try {
-    const brands = await Brand.findAll();
-    res.json(brands);
-  } catch (error) {
-    console.error('Errore durante il recupero dei brand:', error);
-    res.status(500).json({ message: 'Errore durante il recupero dei brand' });
-  }
-};
-
-// Modifica un brand esistente
-export const updateBrand = async (req: Request, res: Response) => {
+const updateBrand = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { nome, abbreviazione } = req.body;
 
-  try {
-    const brand = await Brand.findByPk(id);
-    if (!brand) {
-      return res.status(404).json({ message: 'Brand non trovato' });
-    }
+  const brands = (await readJSON(BRANDS_FILE)) || [];
+  const index = brands.findIndex((b: any) => String(b.id) === id);
 
-    brand.nome = nome;
-    brand.abbreviazione = abbreviazione;
-    await brand.save();
+  if (index === -1) return res.status(404).json({ message: 'Brand non trovato' });
 
-    res.json({ message: 'Brand aggiornato con successo', brand });
-  } catch (error) {
-    console.error('Errore durante l\'aggiornamento del brand:', error);
-    res.status(500).json({ message: 'Errore durante l\'aggiornamento del brand' });
-  }
+  brands[index] = {
+    ...brands[index],
+    nome: nome || brands[index].nome,
+    abbreviazione: abbreviazione || brands[index].abbreviazione
+  };
+
+  await writeJSON(brands, BRANDS_FILE);
+  res.json(brands[index]);
 };
 
-// Elimina un brand
-export const deleteBrand = async (req: Request, res: Response) => {
+const deleteBrand = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  try {
-    const result = await Brand.destroy({ where: { id } });
-    if (result) {
-      res.json({ message: 'Brand eliminato con successo' });
-    } else {
-      res.status(404).json({ message: 'Brand non trovato' });
-    }
-  } catch (error) {
-    console.error('Errore durante l\'eliminazione del brand:', error);
-    res.status(500).json({ message: 'Errore durante l\'eliminazione del brand' });
+  const brands = (await readJSON(BRANDS_FILE)) || [];
+  const updated = brands.filter((b: any) => String(b.id) !== id);
+
+  if (updated.length === brands.length) {
+    return res.status(404).json({ message: 'Brand non trovato' });
   }
+
+  await writeJSON(updated, BRANDS_FILE);
+  res.json({ message: 'Brand eliminato' });
 };
+
+export { getAllBrands, createBrand, updateBrand, deleteBrand };
