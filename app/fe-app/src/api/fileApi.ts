@@ -33,3 +33,8 @@ export const deleteFile = async (nome: string) => {
   const response = await axios.delete(`${API_URL}/files/${nome}`);
   return response.data;
 };
+
+export const getFiles = async (abbreviazione: string) => {
+  const response = await axios.get(`${API_URL}/files?abbreviazione=${abbreviazione}`);
+  return response.data;
+};

@@ -1,0 +1,46 @@
+[
+  {
+    "idGarment": 1001,
+    "abbreviazione": "AW",
+    "codiceColoreCampione": "52",
+    "coloreCampione": "GG",
+    "varianti": "55,45,47F",
+    "pacchetto": "F",
+    "categoria": "DD",
+    "tm": "TM458",
+    "base": "DD",
+    "descrizione": "DD",
+    "prezzo": 12.1,
+    "prezzoTex": 13.5,
+    "taglia": "S",
+    "tm2": "TM025",
+    "fornitore": "X",
+    "fornitoreTex": "X",
+    "gestionale": "AW251001DD",
+    "marka": "SS25AW-1001DD"
+  },
+  {
+    "idGarment": 1002,
+    "abbreviazione": "AW",
+    "codiceColoreCampione": "25",
+    "coloreCampione": "ggg",
+    "varianti": [
+      "250",
+      "852-l",
+      "855"
+    ],
+    "pacchetto": "g",
+    "categoria": "GG",
+    "tm": "TM453",
+    "base": "gg",
+    "descrizione": "gg",
+    "prezzo": 2.5,
+    "prezzoTex": 5,
+    "taglia": "S",
+    "tm2": "TM852",
+    "fornitore": "g",
+    "fornitoreTex": "g",
+    "gestionale": "AW251002GG",
+    "marka": "SS25AW-1002GG"
+  }
+]

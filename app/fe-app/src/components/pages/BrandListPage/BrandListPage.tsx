@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getBrands,
   createBrand,
@@ -20,6 +21,7 @@ const BrandListPage: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedNome, setEditedNome] = useState('');
   const [editedAbbreviazione, setEditedAbbreviazione] = useState('');
+  const navigate = useNavigate();
 
   const fetchBrands = async () => {
     const data = await getBrands();
@@ -30,16 +32,27 @@ const BrandListPage: React.FC = () => {
     fetchBrands();
   }, []);
 
+  const normalizeAbbr = (abbr: string) => abbr.toUpperCase().trim();
+
   const handleCreate = async () => {
-    if (!nome || !abbreviazione) return alert('Campi obbligatori');
-    await createBrand(nome, abbreviazione);
+    if (!nome || !abbreviazione) {
+      alert('Nome e abbreviazione sono obbligatori');
+      return;
+    }
+
+    await createBrand(nome.trim(), normalizeAbbr(abbreviazione));
     setNome('');
     setAbbreviazione('');
     fetchBrands();
   };
 
   const handleUpdate = async (id: number) => {
-    await updateBrand(id, editedNome, editedAbbreviazione);
+    if (!editedNome || !editedAbbreviazione) {
+      alert('Nome e abbreviazione sono obbligatori');
+      return;
+    }
+
+    await updateBrand(id, editedNome.trim(), normalizeAbbr(editedAbbreviazione));
     setEditingId(null);
     fetchBrands();
   };
@@ -54,17 +67,20 @@ const BrandListPage: React.FC = () => {
   return (
     <div className="brand-list">
       <h2>Lista Brand</h2>
-      <input
-        placeholder="Nome"
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-      />
-      <input
-        placeholder="Abbreviazione"
-        value={abbreviazione}
-        onChange={(e) => setAbbreviazione(e.target.value)}
-      />
-      <button onClick={handleCreate}>Crea Brand</button>
+      <div className="brand-form">
+        <input
+          placeholder="Nome"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+        />
+        <input
+          placeholder="Abbreviazione"
+          value={abbreviazione}
+          onChange={(e) => setAbbreviazione(e.target.value.toUpperCase())}
+          maxLength={5}
+        />
+        <button onClick={handleCreate}>Crea Brand</button>
+      </div>
 
       <ul>
         {brands.map((b) => (
@@ -77,7 +93,10 @@ const BrandListPage: React.FC = () => {
                 />
                 <input
                   value={editedAbbreviazione}
-                  onChange={(e) => setEditedAbbreviazione(e.target.value)}
+                  onChange={(e) =>
+                    setEditedAbbreviazione(e.target.value.toUpperCase())
+                  }
+                  maxLength={5}
                 />
                 <button onClick={() => handleUpdate(b.id)}>Salva</button>
                 <button onClick={() => setEditingId(null)}>Annulla</button>
@@ -96,6 +115,9 @@ const BrandListPage: React.FC = () => {
                   Modifica
                 </button>
                 <button onClick={() => handleDelete(b.id)}>Elimina</button>
+                <button onClick={() => navigate(`/${b.abbreviazione}/files`)}>
+                  Entra
+                </button>
               </>
             )}
           </li>

@@ -2,8 +2,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { getConfiguredPath } from '../controllers/config.controller.js';
 
-const basePath = process.env.LOCAL_DATA_PATH || './data'; // path locale definito all'avvio
-
 export const ensureDir = async (targetPath: string) => {
   try {
     await fs.mkdir(targetPath, { recursive: true });
@@ -37,8 +35,21 @@ export const writeJSON = async (data: any, ...segments: string[]) => {
   }
 };
 
+export const writeCSV = async (csvData: string, ...segments: string[]) => {
+  try {
+    const basePath = await getConfiguredPath();
+    const filePath = path.join(basePath, ...segments);
+    await ensureDir(path.dirname(filePath));
+    await fs.writeFile(filePath, csvData, 'utf-8');
+  } catch (err) {
+    console.error('Errore nel salvataggio CSV:', err);
+    throw err;
+  }
+};
+
 export const deleteFile = async (...segments: string[]) => {
   try {
+    const basePath = await getConfiguredPath();
     const filePath = path.join(basePath, ...segments);
     await fs.unlink(filePath);
   } catch (err) {
@@ -49,10 +60,25 @@ export const deleteFile = async (...segments: string[]) => {
 
 export const deleteDirectory = async (...segments: string[]) => {
   try {
+    const basePath = await getConfiguredPath();
     const dirPath = path.join(basePath, ...segments);
     await fs.rm(dirPath, { recursive: true, force: true });
   } catch (err) {
     console.error('Errore eliminazione directory:', err);
     throw err;
   }
+};
+
+export const listDirectories = async (...segments: string[]) => {
+  const basePath = await getConfiguredPath();
+  const fullPath = path.join(basePath, ...segments);
+  const entries = await fs.readdir(fullPath, { withFileTypes: true });
+  return entries.filter(entry => entry.isDirectory()).map(entry => entry.name);
+};
+
+export const listFiles = async (...segments: string[]) => {
+  const basePath = await getConfiguredPath();
+  const fullPath = path.join(basePath, ...segments);
+  const entries = await fs.readdir(fullPath, { withFileTypes: true });
+  return entries.filter(entry => entry.isFile()).map(entry => entry.name);
 };
