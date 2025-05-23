@@ -1,29 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { getGarmentsByFile, exportGarmentsCSV } from '../../../api/garmentsApi';
 import {type Garment } from '../../../types/Garment';
-import GarmentsTable from '../../molecules/GarmentFormStepper/GarmentFormStepper';
+import GarmentsTable from '../../organisms/GarmentsTable/GarmentsTable';
 import GarmentFormStepper from '../../molecules/GarmentFormStepper/GarmentFormStepper';
+
+// Atoms
+import Button from '../../atoms/Button/Button';
+
+//SCSS
+import './GarmentsTablePage.scss';
 
 const GarmentsTablePage: React.FC = () => {
   const { abbrev, fileId } = useParams<{ abbrev: string; fileId: string }>();
   const [garments, setGarments] = useState<Garment[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [filterResetCounter, setFilterResetCounter] = useState(0);
 
-  useEffect(() => {
-    if (abbrev && fileId) {
-      fetchGarments();
-    }
-  }, [abbrev, fileId]);
-
-  const fetchGarments = async () => {
+  const fetchGarments = useCallback(async () => {
     try {
       const data = await getGarmentsByFile(abbrev!, fileId!);
       setGarments(data);
     } catch (err) {
       console.error('Errore nel caricamento capi:', err);
     }
-  };
+  }, [abbrev, fileId]);
+  
+  useEffect(() => {
+    if (abbrev && fileId) fetchGarments();
+  }, [abbrev, fileId, fetchGarments]);
+  
 
   const handleExport = async () => {
     try {
@@ -37,34 +43,37 @@ const GarmentsTablePage: React.FC = () => {
 
   return (
     <div className="garments-page">
-      <h2>
-        Capi – <code>{fileId}</code>
-      </h2>
+  <div className="header">
+    <h2>Capi</h2>
+    <code className="file-id">{fileId}</code>
+  </div>
 
-      <div className="actions">
-        <button onClick={() => setShowForm(true)}>Aggiungi Capo</button>
-        <button onClick={handleExport}>Esporta CSV</button>
-      </div>
+  <div className="actions">
+    <Button label="Aggiungi Capo" type="primary" size="l" onClick={() => setShowForm(true)} />
+    <Button label="Esporta CSV" type="secondary" size="l" onClick={handleExport} />
+  </div>
 
-      <GarmentsTable
-        garments={garments}
-        setGarments={setGarments}
-        abbrev={abbrev}
-        fileId={fileId}
-      />
+  <GarmentsTable
+    garments={garments}
+    setGarments={setGarments}
+    abbrev={abbrev}
+    fileId={fileId}
+    resetTrigger={filterResetCounter}
+  />
 
-      {showForm && (
-        <GarmentFormStepper
-          abbrev={abbrev}
-          fileId={fileId}
-          onClose={() => setShowForm(false)}
-          onSuccess={(newGarment) => {
-            setGarments([...garments, newGarment]);
-            setShowForm(false);
-          }}
-        />
-      )}
-    </div>
+  {showForm && (
+    <GarmentFormStepper
+      abbrev={abbrev}
+      fileId={fileId}
+      onClose={() => setShowForm(false)}
+      onSuccess={(newGarment) => {
+        setGarments(prev => [...prev, newGarment]);
+        setFilterResetCounter(c => c + 1); // 👈 trigger
+        setShowForm(false);
+      }}
+    />
+  )}
+</div>
   );
 };
 

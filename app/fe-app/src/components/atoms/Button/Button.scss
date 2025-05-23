@@ -1,1 +1,53 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
 
+.button {
+  font-family: $font-main;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: $radius-md;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  display: inline-block;
+
+  &.primary {
+    background-color: $color-dark-gray;
+    color: $color-white;
+    box-shadow: $shadow-md;
+
+    &:hover {
+      background-color: $color-black;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &.secondary {
+    background-color: $color-light-gray;
+    color: $color-black;
+    box-shadow: $shadow-sm;
+
+    &:hover {
+      background-color: darken($color-light-gray, 5%);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &.s {
+    padding: $space-xs $space-sm;
+    font-size: $font-size-sm;
+  }
+
+  &.l {
+    padding: $space-sm $space-lg;
+    font-size: $font-size-md;
+  }
+}

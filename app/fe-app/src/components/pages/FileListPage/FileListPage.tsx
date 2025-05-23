@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './FileListPage.scss';
 import axios from 'axios';
 import {
   getFiles,
@@ -8,6 +7,12 @@ import {
   updateFile,
   deleteFile
 } from '../../../api/fileApi';
+
+// Atoms
+import Button from '../../atoms/Button/Button';
+
+//SCSS
+import './FileListPage.scss';
 
 interface FileItem {
   nome: string;
@@ -27,14 +32,15 @@ const FileListPage: React.FC = () => {
   const [stagione, setStagione] = useState<'SS' | 'FW'>('SS');
   const [anno, setAnno] = useState('');
 
+  const fetchFiles = async () => {
+    if (abbreviazione) {
+      const data = await getFiles(abbreviazione.toUpperCase());
+      setFiles(data);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      if (abbreviazione) {
-        const data = await getFiles(abbreviazione.toUpperCase());
-        setFiles(data);
-      }
-    };
-    fetch();
+    fetchFiles();
   }, [abbreviazione]);
 
   if (!abbreviazione) return <p>Abbreviazione mancante</p>;
@@ -73,8 +79,9 @@ const FileListPage: React.FC = () => {
 
   const handleUpdate = async (oldNome: string) => {
     try {
-      const updated = await updateFile(oldNome, abbreviazione, editStagione, editAnno);
-      setFiles(files.map(f => f.nome === oldNome ? updated : f));
+      await updateFile(oldNome, abbreviazione, editStagione, editAnno);
+      // Rifetch per riflettere il nuovo nome e abbreviazione
+      await fetchFiles();
       setEditingNome(null);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -87,59 +94,66 @@ const FileListPage: React.FC = () => {
 
   return (
     <div className="file-list-page">
-      <h2>File del Brand <strong>{abbreviazione}</strong></h2>
+  <h2>File del Brand <span className="highlight">{abbreviazione}</span></h2>
 
-      <div className="file-form">
-        <select value={stagione} onChange={(e) => setStagione(e.target.value as 'SS' | 'FW')}>
-          <option value="SS">SS</option>
-          <option value="FW">FW</option>
-        </select>
-        <input
-          value={anno}
-          onChange={(e) => setAnno(e.target.value)}
-          placeholder="Anno (es. 25)"
-          maxLength={2}
-        />
-        <button onClick={handleCreate}>Crea File</button>
-      </div>
+  <div className="file-form">
+    <select value={stagione} onChange={(e) => setStagione(e.target.value as 'SS' | 'FW')}>
+      <option value="SS">SS</option>
+      <option value="FW">FW</option>
+    </select>
+    <input
+      value={anno}
+      onChange={(e) => setAnno(e.target.value)}
+      placeholder="Anno (es. 25)"
+      maxLength={2}
+    />
+    <Button label="Crea File" type="primary" size="l" onClick={handleCreate} />
+  </div>
 
-      <ul>
-        {files.map(file => (
-          <li key={file.nome}>
-            {editingNome === file.nome ? (
-              <>
-                <select
-                  value={editStagione}
-                  onChange={(e) => setEditStagione(e.target.value as 'SS' | 'FW')}
-                >
-                  <option value="SS">SS</option>
-                  <option value="FW">FW</option>
-                </select>
-                <input
-                  value={editAnno}
-                  onChange={(e) => setEditAnno(e.target.value)}
-                  maxLength={2}
-                  placeholder="Anno"
-                />
-                <button onClick={() => handleUpdate(file.nome)}>Salva</button>
-                <button onClick={() => setEditingNome(null)}>Annulla</button>
-              </>
-            ) : (
-              <>
-                <strong>{file.nome}</strong> – <small>{new Date(file.createdAt).toLocaleString()}</small>
-                <button onClick={() => handleOpen(file)}>Apri</button>
-                <button onClick={() => {
+  <ul className="file-list">
+    {files
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      .map(file => (
+        <li key={file.nome} className="file-item">
+          {editingNome === file.nome ? (
+            <div className="file-edit-form">
+              <select
+                value={editStagione}
+                onChange={(e) => setEditStagione(e.target.value as 'SS' | 'FW')}
+              >
+                <option value="SS">SS</option>
+                <option value="FW">FW</option>
+              </select>
+              <input
+                value={editAnno}
+                onChange={(e) => setEditAnno(e.target.value)}
+                maxLength={2}
+                placeholder="Anno"
+              />
+              <Button label="Salva" type="primary" size="l" onClick={() => handleUpdate(file.nome)} />
+              <Button label="Annulla" type="secondary" size="l" onClick={() => setEditingNome(null)} />
+            </div>
+          ) : (
+            <div className="file-item-content">
+              <div>
+                <strong>{file.nome}</strong>
+                <small>{new Date(file.createdAt).toLocaleString()}</small>
+              </div>
+              <div className="file-actions">
+                <Button label="Apri" type="primary" size="l" onClick={() => handleOpen(file)} />
+                <Button label="Modifica" type="secondary" size="l" onClick={() => {
                   setEditingNome(file.nome);
                   setEditAnno(file.anno);
                   setEditStagione(file.stagione);
-                }}>Modifica</button>
-                <button onClick={() => handleDelete(file.nome)}>Elimina</button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+                }} />
+                <Button label="Elimina" type="secondary" size="l" onClick={() => handleDelete(file.nome)} />
+              </div>
+            </div>
+          )}
+        </li>
+      ))}
+  </ul>
+</div>
   );
 };
 

@@ -1,0 +1,85 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.file-list-page {
+    padding: $space-lg;
+    max-width: 800px;
+    margin: 0 auto;
+  
+    h2 {
+      font-size: $font-size-lg;
+      font-weight: 700;
+      margin-bottom: $space-md;
+  
+      .highlight {
+        color: $color-accent;
+      }
+    }
+  
+    .file-form {
+      display: flex;
+      gap: $space-sm;
+      margin-bottom: $space-lg;
+      flex-wrap: wrap;
+  
+      select,
+      input {
+        padding: $space-sm;
+        font-size: $font-size-md;
+        border: 1px solid $color-gray;
+        border-radius: $radius-sm;
+      }
+    }
+  
+    .file-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+  
+      .file-item {
+        background-color: $color-light-gray;
+        border-radius: $radius-md;
+        padding: $space-md;
+        margin-bottom: $space-md;
+        box-shadow: $shadow-sm;
+  
+        .file-item-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: $space-sm;
+  
+          strong {
+            display: block;
+            font-weight: 600;
+            margin-bottom: $space-xs;
+          }
+  
+          small {
+            color: $color-gray;
+            font-size: $font-size-sm;
+          }
+  
+          .file-actions {
+            display: flex;
+            gap: $space-sm;
+          }
+        }
+  
+        .file-edit-form {
+          display: flex;
+          gap: $space-sm;
+          flex-wrap: wrap;
+  
+          select,
+          input {
+            padding: $space-sm;
+            font-size: $font-size-md;
+            border: 1px solid $color-gray;
+            border-radius: $radius-sm;
+          }
+        }
+      }
+    }
+  }

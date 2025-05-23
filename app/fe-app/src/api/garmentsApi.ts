@@ -20,7 +20,7 @@ export type GarmentCreateInput = {
   tm: string;
   codiceColoreCampione: string;
   coloreCampione?: string;
-  varianti?: string | string[];
+  varianti?: string;
   pacchetto?: string;
   prezzo?: number | null;
   prezzoTex?: number | null;

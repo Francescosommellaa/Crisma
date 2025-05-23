@@ -1,42 +1,89 @@
-import React, { useState } from 'react';
-import {type Garment } from '../../../types/Garment';
+import React, { useState, useMemo } from 'react';
+import { type Garment } from '../../../types/Garment';
 import { deleteGarment, updateGarment } from '../../../api/garmentsApi';
+import Button from '../../atoms/Button/Button';
+import './GarmentsTable.scss';
 
 interface Props {
   garments: Garment[];
   setGarments: React.Dispatch<React.SetStateAction<Garment[]>>;
   abbrev: string;
   fileId: string;
+  resetTrigger?: number;
 }
 
+
+
+const columns = [
+  { key: 'categoria', label: 'Categoria' },
+  { key: 'base', label: 'Base' },
+  { key: 'descrizione', label: 'Descrizione' },
+  { key: 'gestionale', label: 'Gestionale' },
+  { key: 'marka', label: 'Marka' },
+  { key: 'codiceColoreCampione', label: 'Cod. ColoreC' },
+  { key: 'coloreCampione', label: 'ColoreC' },
+  { key: 'varianti', label: 'Varianti' },
+  { key: 'tm', label: 'TM' },
+  { key: 'fornitoreTex', label: 'FornitoreTex' },
+  { key: 'prezzoTex', label: 'PrezzoTex' },
+  { key: 'tm2', label: 'TM2' },
+  { key: 'fornitore', label: 'Fornitore' },
+  { key: 'prezzo', label: 'Prezzo' },
+  { key: 'taglia', label: 'Taglia' },
+  { key: 'pacchetto', label: 'Pacchetto' },
+];
+
 const GarmentsTable: React.FC<Props> = ({ garments, setGarments, abbrev, fileId }) => {
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<Partial<Garment>>({});
+
+  const filteredData = useMemo(() => {
+    return garments.filter((item) =>
+      columns.every(({ key }) => {
+        const filterValue = filters[key]?.toLowerCase() || '';
+        return item[key as keyof Garment]?.toString().toLowerCase().includes(filterValue);
+      })
+    );
+  }, [garments, filters]);
 
   const startEdit = (garment: Garment) => {
     setEditingId(garment.idGarment);
     setFormData({
-      base: garment.base,
-      descrizione: garment.descrizione,
-      categoria: garment.categoria,
+      ...garment,
       tm: garment.tm?.replace('TM', '') || '',
-      prezzo: garment.prezzo ?? undefined,
-      taglia: garment.taglia ?? '',
+      tm2: garment.tm2?.replace('TM', '') || '',
     });
   };
 
   const handleChange = (field: keyof Garment, value: string | number) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      const updated = { ...prev, [field]: value };
+
+      if (field === 'codiceColoreCampione') {
+        if (prev.coloreCampione) updated.coloreCampione = '';
+      }
+
+      if (field === 'coloreCampione') {
+        if (prev.codiceColoreCampione) updated.codiceColoreCampione = prev.codiceColoreCampione;
+      }
+
+      return updated;
+    });
   };
 
   const handleSave = async (id: number) => {
     try {
-      const updated = await updateGarment(abbrev, fileId, id, {
+      const payload = {
         ...formData,
-      });
-      setGarments((prev) =>
-        prev.map((g) => (g.idGarment === id ? updated : g))
-      );
+        tm: formData.tm?.padStart(3, '0'),
+        tm2: formData.tm2?.padStart(3, '0'),
+        prezzo: formData.prezzo ? parseFloat(formData.prezzo.toString()) : undefined,
+        prezzoTex: formData.prezzoTex ? parseFloat(formData.prezzoTex.toString()) : undefined,
+      };
+
+      const updated = await updateGarment(abbrev, fileId, id, payload);
+      setGarments((prev) => prev.map((g) => (g.idGarment === id ? updated : g)));
       setEditingId(null);
     } catch (err) {
       alert('Errore aggiornamento capo');
@@ -55,93 +102,63 @@ const GarmentsTable: React.FC<Props> = ({ garments, setGarments, abbrev, fileId 
       }
     }
   };
+  
 
   return (
     <table className="garments-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Categoria</th>
-          <th>Base</th>
-          <th>Descrizione</th>
-          <th>TM</th>
-          <th>Prezzo</th>
-          <th>Taglia</th>
-          <th>Gestionale</th>
-          <th>Marka</th>
+          <th>#</th>
+          {columns.map(({ key, label }) => (
+            <th key={key}>
+              {label}
+              <br />
+              <input
+                className="filter-input"
+                type="text"
+                value={filters[key] || ''}
+                onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
+                placeholder={`Filtra ${label}`}
+              />
+            </th>
+          ))}
           <th>Azioni</th>
         </tr>
       </thead>
       <tbody>
-        {garments.map((g) => (
-          <tr key={g.idGarment}>
-            <td>{g.idGarment}</td>
-
-            {editingId === g.idGarment ? (
-              <>
-                <td>
+        {filteredData.map((item, index) => (
+          <tr key={item.idGarment}>
+            <td>{index + 1}</td>
+            {columns.map(({ key }) => (
+              <td key={key}>
+                {editingId === item.idGarment ? (
                   <input
-                    value={formData.categoria || ''}
-                    onChange={(e) => handleChange('categoria', e.target.value.toUpperCase())}
+                    type={key.includes('prezzo') ? 'number' : 'text'}
+                    value={formData[key as keyof Garment]?.toString() || ''}
+                    onChange={(e) =>
+                      handleChange(
+                        key as keyof Garment,
+                        key.includes('prezzo')
+                          ? parseFloat(e.target.value)
+                          : e.target.value
+                      )
+                    }
                   />
-                </td>
-                <td>
-                  <input
-                    value={formData.base || ''}
-                    onChange={(e) => handleChange('base', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={formData.descrizione || ''}
-                    onChange={(e) => handleChange('descrizione', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={formData.tm || ''}
-                    onChange={(e) => handleChange('tm', e.target.value)}
-                    maxLength={3}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    step="0.001"
-                    value={formData.prezzo ?? ''}
-                    onChange={(e) => handleChange('prezzo', parseFloat(e.target.value))}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={formData.taglia || ''}
-                    onChange={(e) => handleChange('taglia', e.target.value)}
-                  />
-                </td>
-              </>
-            ) : (
-              <>
-                <td>{g.categoria}</td>
-                <td>{g.base}</td>
-                <td>{g.descrizione}</td>
-                <td>{g.tm}</td>
-                <td>{g.prezzo?.toFixed(3)}</td>
-                <td>{g.taglia}</td>
-              </>
-            )}
-
-            <td>{g.gestionale}</td>
-            <td>{g.marka}</td>
+                ) : (
+                  item[key as keyof Garment]
+                )}
+              </td>
+            ))}
             <td>
-              {editingId === g.idGarment ? (
+              {editingId === item.idGarment ? (
                 <>
-                  <button onClick={() => handleSave(g.idGarment)}>Salva</button>
-                  <button onClick={() => setEditingId(null)}>Annulla</button>
+                  <Button label="Salva" onClick={() => handleSave(item.idGarment)} size="s" />
+                  <Button label="Annulla" onClick={() => setEditingId(null)} type="secondary" size="s" />
                 </>
               ) : (
                 <>
-                  <button onClick={() => startEdit(g)}>Modifica</button>
-                  <button onClick={() => handleDelete(g.idGarment)}>Elimina</button>
+                  <Button label="Modifica" onClick={() => startEdit(item)} size="s" />
+                  <Button label="Elimina" onClick={() => handleDelete(item.idGarment)} type="secondary" size="s" />
                 </>
               )}
             </td>

@@ -1,0 +1,48 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.garment-form-stepper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $space-lg;
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    margin-bottom: $space-md;
+
+    .step-info {
+      font-weight: 400;
+      font-size: $font-size-sm;
+      color: $color-gray;
+    }
+  }
+
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+
+    input {
+      padding: $space-sm;
+      font-size: $font-size-md;
+      border: 1px solid $color-gray;
+      border-radius: $radius-sm;
+      background-color: $color-white;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: $color-accent;
+        outline: none;
+      }
+    }
+  }
+
+  .stepper-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
+    justify-content: flex-end;
+    margin-top: $space-lg;
+  }
+}

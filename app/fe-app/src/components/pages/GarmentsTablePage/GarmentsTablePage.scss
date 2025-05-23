@@ -1,0 +1,37 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.garments-page {
+  padding: $space-lg;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    align-items: baseline;
+    gap: $space-sm;
+    flex-wrap: wrap;
+    margin-bottom: $space-md;
+
+    h2 {
+      font-size: $font-size-lg;
+      font-weight: 700;
+    }
+
+    .file-id {
+      font-family: monospace;
+      font-size: $font-size-sm;
+      background: $color-light-gray;
+      padding: $space-xs $space-sm;
+      border-radius: $radius-sm;
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-sm;
+    margin-bottom: $space-md;
+    flex-wrap: wrap;
+  }
+}

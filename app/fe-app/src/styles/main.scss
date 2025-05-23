@@ -1,21 +1,55 @@
-@import "./variables";
+@use './variables' as *;
+@use './mixins' as *; 
 
+// Reset base
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
+  font-family: $font-main;
+  font-size: $font-size-md;
+  color: $color-black;
+  background-color: $color-white;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+// Tipografia base
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: $color-black;
+}
+
+a {
+  color: $color-accent;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
   }
-  
-  .button {
-    padding: 8px 16px;
-    background-color: #1ba869;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  
-    &:hover {
-      background-color: #159456;
-    }
-  }
-  
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+
+// Utilità opzionali
+.text-center {
+  text-align: center;
+}
+
+.mt-md { margin-top: $space-md; }
+.mb-md { margin-bottom: $space-md; }
+.pt-lg { padding-top: $space-lg; }
+.pb-lg { padding-bottom: $space-lg; }

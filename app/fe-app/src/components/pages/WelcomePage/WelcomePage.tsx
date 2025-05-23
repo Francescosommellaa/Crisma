@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { openDB } from 'idb';
 
+// Atoms
+import Button from '../../atoms/Button/Button';
+
 // SCSS
 import './WelcomePage.scss';
 
@@ -87,17 +90,24 @@ const WelcomePage: React.FC = () => {
 
   return (
     <div className="welcome-page">
-      <h1>{savedPath ? 'Bentornato!' : 'Benvenuto!'}</h1>
+      <h1>{savedPath ? 'BENTORNATO!' : 'BENVENUTO!'}</h1>
       {savedPath ? (
   <>
-    <p>Cartella configurata:</p>
-    <code>{savedPath}</code>
+    <p className="label">SEI NELLA CARTELLA:</p>
+    <code className="folder">{savedPath}</code>
     <br />
-    <button onClick={handleEnter}>Entra</button>
-    <button onClick={handleChooseFolder}>Cambia cartella</button> {/* ✅ nuovo */}
+    <Button label="ENTRA" onClick={handleEnter} type="primary" size="l" />
+    <div className='ext'>
+      <Button label="CAMBIA CARTELLA" onClick={handleChooseFolder} type="secondary" size="l" />
+    </div>
   </>
 ) : (
-  <button onClick={handleChooseFolder}>Scegli una cartella per salvare i dati</button>
+  <Button
+  label="SCEGLI UNA CARTELLA PER SALVARE I DATI"
+  onClick={handleChooseFolder}
+  type="primary"
+  size="l"
+/>
 )}
     </div>
   );

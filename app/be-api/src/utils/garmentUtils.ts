@@ -42,7 +42,7 @@ export const normalizeTM = (value?: string) =>
       abbreviazione: abbrev,
       codiceColoreCampione: body.codiceColoreCampione,
       coloreCampione,
-      varianti: body.varianti || [],
+      varianti: body.varianti,
       pacchetto: body.pacchetto || '',
       categoria: body.categoria.toUpperCase(),
       tm: normalizeTM(body.tm),

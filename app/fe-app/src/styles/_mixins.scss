@@ -1,0 +1,45 @@
+@use './variables' as *;
+
+@mixin flex-center-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin text-xl {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-black;
+}
+
+@mixin label-muted {
+  font-size: $font-size-md;
+  color: $color-gray;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@mixin card-style {
+  background-color: $color-light-gray;
+  border-radius: $radius-sm;
+  padding: $space-sm $space-md;
+  box-shadow: $shadow-sm;
+}
+
+@mixin primary-button {
+  background-color: $color-dark-gray;
+  color: $color-white;
+  border: none;
+  border-radius: $radius-md;
+  padding: $space-sm $space-lg;
+  font-weight: 600;
+  font-size: $font-size-md;
+  cursor: pointer;
+  box-shadow: $shadow-md;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: $color-black;
+  }
+}

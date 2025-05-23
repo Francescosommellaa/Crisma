@@ -1,0 +1,42 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.garments-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-sm;
+  
+    thead, tbody {
+      th, td {
+        height: 60px;
+        min-width: 160px;
+        max-width: 160px;
+        padding: 0.5rem;
+        background-color: #fcfcfc;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+        vertical-align: middle;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+  
+      td:first-child, th:first-child {
+        min-width: 50px;
+        max-width: 50px;
+        text-align: center;
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+    }
+  
+    .filter-input {
+      width: 100%;
+      height: 32px;
+      font-size: $font-size-sm;
+      padding: 0.25rem;
+      border-radius: 0.25rem;
+      border: 1px solid #ccc;
+      margin-top: 0.25rem;
+    }
+  }
+  

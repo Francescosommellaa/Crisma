@@ -3,7 +3,7 @@ export interface Garment {
   abbreviazione: string;
   codiceColoreCampione: string;
   coloreCampione: string;
-  varianti?: string[];
+  varianti?: string;
   pacchetto?: string;
   categoria: string;
   tm: string;

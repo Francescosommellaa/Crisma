@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { readJSON, listDirectories, writeJSON, deleteDirectory, ensureDir } from '../services/fsService.js';
+import { readJSON, listDirectories, writeJSON, deleteDirectory, ensureDir, renameFile, renameDirectory } from '../services/fsService.js';
 import path from 'path';
+import { getGarmentsPath, generateCodes } from '../utils/garmentUtils.js';
 
 // Helpers
 const getFileDir = (abbrev: string, nomeFile: string) =>
@@ -73,18 +74,20 @@ export const updateFile = async (req: Request, res: Response) => {
   const { abbreviazione, stagione, anno } = req.body;
 
   const OLD_ABBR = nome.split('-')[0];
+  const OLD_STAG = nome.split('-')[1];
+  const OLD_ANNO = nome.split('-')[2];
   const NEW_ABBR = abbreviazione.toUpperCase();
   const NEW_STAG = stagione.toUpperCase();
   const newName = `${NEW_ABBR}-${NEW_STAG}-${anno}`;
 
-  const oldPath = getFileDir(OLD_ABBR, nome);
-  const newPath = getFileDir(NEW_ABBR, newName);
+  const oldDirPath = getFileDir(OLD_ABBR, nome);
+  const newDirPath = getFileDir(NEW_ABBR, newName);
 
   try {
     const metadata = await readJSON(...getMetadataPath(OLD_ABBR, nome));
     if (!metadata) return res.status(404).json({ message: 'File non trovato' });
 
-    const updated = {
+    const updatedMetadata = {
       ...metadata,
       abbreviazione: NEW_ABBR,
       stagione: NEW_STAG,
@@ -92,14 +95,46 @@ export const updateFile = async (req: Request, res: Response) => {
       nome: newName
     };
 
-    await ensureDir(path.join(...newPath));
-    await writeJSON(updated, ...getMetadataPath(NEW_ABBR, newName));
+    // Rinomina la directory del file
+    await renameDirectory(path.join(...oldDirPath), path.join(...newDirPath));
 
-    if (newName !== nome || OLD_ABBR !== NEW_ABBR) {
-      await deleteDirectory(...oldPath);
+    // Aggiorna metadata.json
+    await writeJSON(updatedMetadata, ...getMetadataPath(NEW_ABBR, newName));
+
+    // Rinomina garments.json se esiste
+    const oldGarmentsPath = getGarmentsPath(OLD_ABBR, nome);
+    const newGarmentsPath = getGarmentsPath(NEW_ABBR, newName);
+    try {
+      await renameFile(path.join(...oldGarmentsPath), path.join(...newGarmentsPath));
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err;
+      }
     }
 
-    res.json(updated);
+    //  Rigenera codici dei capi con i nuovi dati del file
+    const garmentsPath = getGarmentsPath(NEW_ABBR, newName);
+    const garments = (await readJSON(...garmentsPath)) || [];
+
+    const updatedGarments = garments.map((g: any) => {
+      const { gestionale, marka } = generateCodes(
+        NEW_ABBR,
+        anno,
+        NEW_STAG,
+        g.idGarment,
+        g.categoria
+      );
+      return {
+        ...g,
+        abbreviazione: NEW_ABBR,
+        gestionale,
+        marka
+      };
+    });
+
+    await writeJSON(updatedGarments, ...garmentsPath)
+
+    res.json(updatedMetadata);
   } catch (err) {
     console.error('Errore aggiornamento file:', err);
     res.status(500).json({ message: 'Errore aggiornamento file' });

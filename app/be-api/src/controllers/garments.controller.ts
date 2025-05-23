@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { readJSON, writeJSON, ensureDir } from '../services/fsService.js';
-import { getColorName, saveColorIfMissing, getColorMap } from '../services/colorService.js';
-import path from 'path';
+import { readJSON, writeJSON } from '../services/fsService.js';
+import { getColorName, saveColorIfMissing} from '../services/colorService.js';
 import { generateCSV } from '../utils/csvExporter.js';
 import {
   normalizeTM,
@@ -10,6 +9,17 @@ import {
   getMetadataPath,
   buildGarment
 } from '../utils/garmentUtils.js';
+
+export const getGarments = async (req: Request, res: Response) => {
+  const { abbrev, fileId } = req.params;
+  try {
+    const garments = (await readJSON(...getGarmentsPath(abbrev, fileId))) || [];
+    res.json(garments);
+  } catch (err) {
+    console.error('Errore lettura capi:', err);
+    res.status(500).json({ message: 'Errore lettura capi' });
+  }
+};
 
 export const addGarment = async (req: Request, res: Response) => {
   const { abbrev, fileId } = req.params;

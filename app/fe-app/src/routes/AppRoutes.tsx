@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+// Styles
+import '../styles/main.scss';
+
 // Pages
 import WelcomePage from '../components/pages/WelcomePage/WelcomePage';
 import BrandListPage from '../components/pages/BrandListPage/BrandListPage';
@@ -8,6 +11,7 @@ import CapiTablePage from '../components/pages/GarmentsTablePage/GarmentsTablePa
 
 // Atoms
 import Button from '../components/atoms/Button/Button';
+
 
 const AppRoutes = () => {
   return (

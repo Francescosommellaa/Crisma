@@ -7,6 +7,12 @@ import {
   deleteBrand
 } from '../../../api/brandApi';
 
+// Atoms
+import Button from '../../atoms/Button/Button';
+
+//SCSS
+import './BrandListPage.scss';
+
 interface Brand {
   id: number;
   nome: string;
@@ -65,65 +71,74 @@ const BrandListPage: React.FC = () => {
   };
 
   return (
-    <div className="brand-list">
-      <h2>Lista Brand</h2>
-      <div className="brand-form">
-        <input
-          placeholder="Nome"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-        />
-        <input
-          placeholder="Abbreviazione"
-          value={abbreviazione}
-          onChange={(e) => setAbbreviazione(e.target.value.toUpperCase())}
-          maxLength={5}
-        />
-        <button onClick={handleCreate}>Crea Brand</button>
-      </div>
-
-      <ul>
-        {brands.map((b) => (
-          <li key={b.id}>
-            {editingId === b.id ? (
-              <>
-                <input
-                  value={editedNome}
-                  onChange={(e) => setEditedNome(e.target.value)}
-                />
-                <input
-                  value={editedAbbreviazione}
-                  onChange={(e) =>
-                    setEditedAbbreviazione(e.target.value.toUpperCase())
-                  }
-                  maxLength={5}
-                />
-                <button onClick={() => handleUpdate(b.id)}>Salva</button>
-                <button onClick={() => setEditingId(null)}>Annulla</button>
-              </>
-            ) : (
-              <>
-                <strong>{b.nome}</strong> ({b.abbreviazione}) –{' '}
+    <div className="brand-list-page">
+    <h2>Lista Brand</h2>
+  
+    <div className="brand-form">
+      <input
+        placeholder="Nome"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+      />
+      <input
+        placeholder="Abbreviazione"
+        value={abbreviazione}
+        onChange={(e) => setAbbreviazione(e.target.value.toUpperCase())}
+        maxLength={5}
+      />
+      <Button label="Crea Brand" type="primary" size="l" onClick={handleCreate} />
+    </div>
+  
+    <ul className="brand-list">
+      {brands.map((b) => (
+        <li key={b.id} className="brand-item">
+          {editingId === b.id ? (
+            <div className="brand-edit-form">
+              <input
+                value={editedNome}
+                onChange={(e) => setEditedNome(e.target.value)}
+                placeholder="Nome"
+              />
+              <input
+                value={editedAbbreviazione}
+                onChange={(e) => setEditedAbbreviazione(e.target.value.toUpperCase())}
+                placeholder="Abbreviazione"
+                maxLength={5}
+              />
+              <Button label="Salva" type="primary" size="l" onClick={() => handleUpdate(b.id)} />
+              <Button label="Annulla" type="secondary" size="l" onClick={() => setEditingId(null)} />
+            </div>
+          ) : (
+            <div className="brand-item-content">
+              <div>
+                <strong>{b.nome}</strong> ({b.abbreviazione})<br />
                 <small>{new Date(b.createdAt).toLocaleString()}</small>
-                <button
+              </div>
+              <div className="brand-actions">
+                <Button
+                  label="Modifica"
+                  type="secondary"
+                  size="l"
                   onClick={() => {
                     setEditingId(b.id);
                     setEditedNome(b.nome);
                     setEditedAbbreviazione(b.abbreviazione);
                   }}
-                >
-                  Modifica
-                </button>
-                <button onClick={() => handleDelete(b.id)}>Elimina</button>
-                <button onClick={() => navigate(`/${b.abbreviazione}/files`)}>
-                  Entra
-                </button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+                />
+                <Button label="Elimina" type="secondary" size="l" onClick={() => handleDelete(b.id)} />
+                <Button
+                  label="Entra"
+                  type="primary"
+                  size="l"
+                  onClick={() => navigate(`/${b.abbreviazione}/files`)}
+                />
+              </div>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
   );
 };
 

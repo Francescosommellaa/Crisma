@@ -1,6 +1,77 @@
-.dashboard-wrapper {
-    position: relative;
-    min-height: 100vh;
-    padding: 2rem;
-  }
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.brand-list-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: $space-lg;
   
+    h2 {
+      font-size: $font-size-lg;
+      font-weight: 700;
+      margin-bottom: $space-md;
+    }
+  
+    .brand-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $space-sm;
+      margin-bottom: $space-lg;
+  
+      input {
+        padding: $space-sm;
+        font-size: $font-size-md;
+        border: 1px solid $color-gray;
+        border-radius: $radius-sm;
+      }
+    }
+  
+    .brand-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+  
+      .brand-item {
+        background-color: $color-light-gray;
+        border-radius: $radius-md;
+        padding: $space-md;
+        margin-bottom: $space-md;
+        box-shadow: $shadow-sm;
+  
+        .brand-item-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          flex-wrap: wrap;
+          gap: $space-sm;
+  
+          strong {
+            font-weight: 600;
+          }
+  
+          small {
+            color: $color-gray;
+            font-size: $font-size-sm;
+          }
+  
+          .brand-actions {
+            display: flex;
+            gap: $space-sm;
+          }
+        }
+  
+        .brand-edit-form {
+          display: flex;
+          gap: $space-sm;
+          flex-wrap: wrap;
+  
+          input {
+            padding: $space-sm;
+            font-size: $font-size-md;
+            border: 1px solid $color-gray;
+            border-radius: $radius-sm;
+          }
+        }
+      }
+    }
+  }

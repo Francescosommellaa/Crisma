@@ -1,17 +1,31 @@
-.welcome-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 5rem;
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
 
-  button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
+.welcome-page {
+  @include flex-center-column;
+  text-align: center;
+  background-color: $color-white;
+  height: 100vh;
+  padding: $space-lg;
+
+  h1 {
+    @include text-xl;
+    margin-bottom: $space-md;
   }
 
-  code {
-    background: #f5f5f5;
-    padding: 0.2rem 0.4rem;
-    font-family: monospace;
+  .label {
+    @include label-muted;
+    margin-bottom: $space-xs;
+  }
+
+  .folder {
+    @include card-style;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    margin-bottom: $space-lg;
+  }
+
+  .ext {
+    margin-top: 1rem;
   }
 }
