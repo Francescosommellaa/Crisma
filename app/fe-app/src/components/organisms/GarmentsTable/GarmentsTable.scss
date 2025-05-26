@@ -1,42 +1,152 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
+.garments-table-wrapper {
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+}
+
 .garments-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: $font-size-sm;
-  
-    thead, tbody {
-      th, td {
-        height: 60px;
-        min-width: 160px;
-        max-width: 160px;
-        padding: 0.5rem;
-        background-color: #fcfcfc;
-        border: 1px solid #e0e0e0;
+  width: max-content;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+  color: #222;
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #f9f9f9;
+
+    tr {
+      th {
+        position: sticky;
+        top: 0;
+        background-color: #f9f9f9;
+        font-weight: 500;
         text-align: left;
-        vertical-align: middle;
-        overflow-wrap: break-word;
-        word-break: break-word;
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid #e0e0e0;
+        min-width: 140px;
+        white-space: nowrap;
+        vertical-align: bottom;
+
+        &:first-child {
+          left: 0;
+          z-index: 3;
+          background-color: #f0f0f0;
+        }
+
+        .filter-input {
+          display: block;
+          margin-top: 0.25rem;
+          width: 100%;
+          font-size: 0.85rem;
+          padding: 4px 6px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background-color: #fff;
+        }
       }
-  
-      td:first-child, th:first-child {
-        min-width: 50px;
-        max-width: 50px;
-        text-align: center;
-        background-color: #f2f2f2;
-        font-weight: bold;
-      }
-    }
-  
-    .filter-input {
-      width: 100%;
-      height: 32px;
-      font-size: $font-size-sm;
-      padding: 0.25rem;
-      border-radius: 0.25rem;
-      border: 1px solid #ccc;
-      margin-top: 0.25rem;
     }
   }
-  
+
+  tbody {
+    tr {
+      background-color: #fff;
+
+      &:nth-child(even) {
+        background-color: #fafafa;
+      }
+
+      &:hover {
+        background-color: #f2f2f2;
+      }
+
+      td {
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid #eaeaea;
+        min-width: 140px;
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:first-child {
+          position: sticky;
+          left: 0;
+          background-color: #f7f7f7;
+          font-weight: 600;
+          text-align: center;
+          z-index: 1;
+        }
+
+        // campi tecnici monospace
+        &.monospace {
+          font-family: "Roboto Mono", monospace;
+          font-optical-sizing: auto;
+          font-size: 0.9rem;
+        }
+
+        input {
+          width: 100%;
+          padding: 4px 6px;
+          font-size: 0.85rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+}
+
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+.filter-badge {
+  background-color: #eaeaea;
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Pulsanti */
+button {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+}
+
+/* Toast "successo" */
+.toast-success {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #1ba869;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  z-index: 9999;
+  animation: fade-in-out 2s ease-in-out;
+}
+
+@keyframes fade-in-out {
+  0% { opacity: 0; transform: translateY(10px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(10px); }
+}

@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { type Garment } from '../../../types/Garment';
+import GarmentTable from '../../../db/GarmentTable';
 import { deleteGarment, updateGarment } from '../../../api/garmentsApi';
 import Button from '../../atoms/Button/Button';
 import './GarmentsTable.scss';
@@ -9,79 +10,66 @@ interface Props {
   setGarments: React.Dispatch<React.SetStateAction<Garment[]>>;
   abbrev: string;
   fileId: string;
+  showToast?: boolean;
   resetTrigger?: number;
 }
 
-
-
-const columns = [
-  { key: 'categoria', label: 'Categoria' },
-  { key: 'base', label: 'Base' },
-  { key: 'descrizione', label: 'Descrizione' },
-  { key: 'gestionale', label: 'Gestionale' },
-  { key: 'marka', label: 'Marka' },
-  { key: 'codiceColoreCampione', label: 'Cod. ColoreC' },
-  { key: 'coloreCampione', label: 'ColoreC' },
-  { key: 'varianti', label: 'Varianti' },
-  { key: 'tm', label: 'TM' },
-  { key: 'fornitoreTex', label: 'FornitoreTex' },
-  { key: 'prezzoTex', label: 'PrezzoTex' },
-  { key: 'tm2', label: 'TM2' },
-  { key: 'fornitore', label: 'Fornitore' },
-  { key: 'prezzo', label: 'Prezzo' },
-  { key: 'taglia', label: 'Taglia' },
-  { key: 'pacchetto', label: 'Pacchetto' },
-];
-
-const GarmentsTable: React.FC<Props> = ({ garments, setGarments, abbrev, fileId }) => {
+const GarmentsTable: React.FC<Props> = ({
+  garments,
+  setGarments,
+  abbrev,
+  fileId,
+  resetTrigger,
+  showToast = false
+}) => {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<Partial<Garment>>({});
 
-  const filteredData = useMemo(() => {
+  const filteredGarments = useMemo(() => {
     return garments.filter((item) =>
-      columns.every(({ key }) => {
-        const filterValue = filters[key]?.toLowerCase() || '';
-        return item[key as keyof Garment]?.toString().toLowerCase().includes(filterValue);
+      GarmentTable.every(({ key }) => {
+        const filter = filters[key];
+        if (!filter) return true;
+        return item[key]?.toString().toLowerCase().includes(filter.toLowerCase());
       })
     );
   }, [garments, filters]);
 
-  const startEdit = (garment: Garment) => {
+  const activeFiltersCount = useMemo(
+    () => Object.values(filters).filter((v) => v?.trim()).length,
+    [filters]
+  );
+
+  const resetFilters = () => setFilters({});
+
+  const startEdit = useCallback((garment: Garment) => {
     setEditingId(garment.idGarment);
     setFormData({
       ...garment,
       tm: garment.tm?.replace('TM', '') || '',
       tm2: garment.tm2?.replace('TM', '') || '',
     });
-  };
+  }, []);
 
-  const handleChange = (field: keyof Garment, value: string | number) => {
+  const handleChange = useCallback((field: keyof Garment, value: string | number) => {
     setFormData((prev) => {
       const updated = { ...prev, [field]: value };
-
-      if (field === 'codiceColoreCampione') {
-        if (prev.coloreCampione) updated.coloreCampione = '';
-      }
-
-      if (field === 'coloreCampione') {
-        if (prev.codiceColoreCampione) updated.codiceColoreCampione = prev.codiceColoreCampione;
-      }
-
+      if (field === 'codiceColoreCampione' && prev.coloreCampione) updated.coloreCampione = '';
+      if (field === 'coloreCampione' && prev.codiceColoreCampione) updated.codiceColoreCampione = prev.codiceColoreCampione;
       return updated;
     });
-  };
+  }, []);
 
   const handleSave = async (id: number) => {
     try {
-      const payload = {
+      const payload: Partial<Garment> = {
         ...formData,
         tm: formData.tm?.padStart(3, '0'),
         tm2: formData.tm2?.padStart(3, '0'),
-        prezzo: formData.prezzo ? parseFloat(formData.prezzo.toString()) : undefined,
-        prezzoTex: formData.prezzoTex ? parseFloat(formData.prezzoTex.toString()) : undefined,
+        prezzo: formData.prezzo ? +formData.prezzo : undefined,
+        prezzoTex: formData.prezzoTex ? +formData.prezzoTex : undefined,
       };
-
       const updated = await updateGarment(abbrev, fileId, id, payload);
       setGarments((prev) => prev.map((g) => (g.idGarment === id ? updated : g)));
       setEditingId(null);
@@ -92,80 +80,101 @@ const GarmentsTable: React.FC<Props> = ({ garments, setGarments, abbrev, fileId 
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('Vuoi eliminare questo capo?')) {
-      try {
-        await deleteGarment(abbrev, fileId, id);
-        setGarments((prev) => prev.filter((g) => g.idGarment !== id));
-      } catch (err) {
-        alert('Errore eliminazione capo');
-        console.error(err);
-      }
+    if (!confirm('Vuoi eliminare questo capo?')) return;
+    try {
+      await deleteGarment(abbrev, fileId, id);
+      setGarments((prev) => prev.filter((g) => g.idGarment !== id));
+    } catch (err) {
+      alert('Errore eliminazione capo');
+      console.error(err);
     }
   };
-  
+
+  useEffect(() => {
+    setFilters({});
+  }, [resetTrigger]);
 
   return (
-    <table className="garments-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          {columns.map(({ key, label }) => (
-            <th key={key}>
-              {label}
-              <br />
-              <input
-                className="filter-input"
-                type="text"
-                value={filters[key] || ''}
-                onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
-                placeholder={`Filtra ${label}`}
-              />
-            </th>
-          ))}
-          <th>Azioni</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filteredData.map((item, index) => (
-          <tr key={item.idGarment}>
-            <td>{index + 1}</td>
-            {columns.map(({ key }) => (
-              <td key={key}>
-                {editingId === item.idGarment ? (
+    <>
+      <div className="filters-bar">
+        {activeFiltersCount > 0 && (
+          <span className="filter-badge">
+            {activeFiltersCount} filtro{activeFiltersCount > 1 ? 'i' : ''} attivo{activeFiltersCount > 1 ? 'i' : ''}
+          </span>
+        )}
+        <Button label="Reset Filtri" size="s" type="secondary" onClick={resetFilters} />
+      </div>
+
+      <div className="garments-table-wrapper">
+        <table className="garments-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              {GarmentTable.map(({ key, label }) => (
+                <th key={key}>
+                  {label}
                   <input
-                    type={key.includes('prezzo') ? 'number' : 'text'}
-                    value={formData[key as keyof Garment]?.toString() || ''}
-                    onChange={(e) =>
-                      handleChange(
-                        key as keyof Garment,
-                        key.includes('prezzo')
-                          ? parseFloat(e.target.value)
-                          : e.target.value
-                      )
-                    }
+                    className="filter-input"
+                    type="text"
+                    placeholder={`Filtra ${label}`}
+                    value={filters[key] || ''}
+                    onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
                   />
-                ) : (
-                  item[key as keyof Garment]
-                )}
-              </td>
+                </th>
+              ))}
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredGarments.length === 0 && (
+              <tr>
+                <td colSpan={GarmentTable.length + 2}>Nessun capo trovato</td>
+              </tr>
+            )}
+            {filteredGarments.map((item, index) => (
+              <tr key={item.idGarment}>
+                <td>{index + 1}</td>
+                {GarmentTable.map(({ key }) => (
+                  <td
+                    key={key}
+                    className={['gestionale', 'marka', 'tm', 'tm2', 'prezzo', 'prezzoTex'].includes(key) ? 'monospace' : ''}
+                  >
+                    {editingId === item.idGarment ? (
+                      <input
+                        type={key.includes('prezzo') ? 'number' : 'text'}
+                        value={formData[key]?.toString() || ''}
+                        onChange={(e) =>
+                          handleChange(key, key.includes('prezzo') ? +e.target.value : e.target.value)
+                        }
+                      />
+                    ) : (
+                      item[key]
+                    )}
+                  </td>
+                ))}
+                <td>
+                  {editingId === item.idGarment ? (
+                    <>
+                      <Button label="Salva" size="s" onClick={() => handleSave(item.idGarment)} />
+                      <Button label="Annulla" size="s" type="secondary" onClick={() => setEditingId(null)} />
+                    </>
+                  ) : (
+                    <>
+                      <Button label="Modifica" size="s" onClick={() => startEdit(item)} />
+                      <Button label="Elimina" size="s" type="secondary" onClick={() => handleDelete(item.idGarment)} />
+                    </>
+                  )}
+                </td>
+              </tr>
             ))}
-            <td>
-              {editingId === item.idGarment ? (
-                <>
-                  <Button label="Salva" onClick={() => handleSave(item.idGarment)} size="s" />
-                  <Button label="Annulla" onClick={() => setEditingId(null)} type="secondary" size="s" />
-                </>
-              ) : (
-                <>
-                  <Button label="Modifica" onClick={() => startEdit(item)} size="s" />
-                  <Button label="Elimina" onClick={() => handleDelete(item.idGarment)} type="secondary" size="s" />
-                </>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+          </tbody>
+        </table>
+      </div>
+
+      {showToast && (
+        <div className="toast-success">✅ Capo creato con successo</div>
+      )}
+    </>
   );
 };
 

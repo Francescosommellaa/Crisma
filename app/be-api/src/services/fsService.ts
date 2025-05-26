@@ -116,6 +116,12 @@ export const renameDirectory = async (oldRelative: string, newRelative: string) 
   const newPath = path.join(base, newRelative);
 
   try {
+    // Se la nuova directory esiste già, errore esplicito
+    try {
+      await fs.access(newPath);
+      throw new Error(`La cartella di destinazione "${newRelative}" esiste già.`);
+    } catch { /* ok, non esiste */ }
+
     await fs.rename(oldPath, newPath);
   } catch (err) {
     console.error('Errore in renameDirectory:', err);

@@ -12,6 +12,8 @@
 
 html,
 body {
+  max-width: 90%;
+  margin: 1rem auto;
   font-family: $font-main;
   font-size: $font-size-md;
   color: $color-black;
