@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Build di Electron
+dist/
+release/
+win-unpacked/
+*.log
+
+# File binari
+*.exe
+*.dmg
+*.app
+
+# File temporanei
+*.temp
+*.cache
+*.bak
+*.old
+
+# Mac e OS
+.DS_Store
+Thumbs.db

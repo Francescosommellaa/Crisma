@@ -1,0 +1,49 @@
+{
+  "name": "electron",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "scripts": {
+    "start": "electron .",
+    "build": "tsc",
+    "make:exe": "npm run build && electron-builder --win"
+  },
+  "build": {
+    "appId": "com.crisma.gestionale",
+    "productName": "Crisma",
+    "directories": {
+      "buildResources": "assets",
+      "output": "release"
+    },
+    "files": [
+      "**/dist/**/*",
+      "../fe-app/dist/**/*",
+      "../be-api/dist/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Crisma"
+    }
+  },
+  "devDependencies": {
+    "electron": "^36.3.1",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.8.3"
+  }
+}

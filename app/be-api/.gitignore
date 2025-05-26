@@ -9,18 +9,16 @@ out/
 # Logs
 *.log
 
-# Vite/React
-.vite/
-*.tsbuildinfo
-
-# Cache e temporanei
-*.cache
+# Temporanei
 *.tmp
+*.cache
+*.bak
+
+# File ambiente e config sensibili
+.env
+.env.local
+.env.*
 
 # Mac e OS
 .DS_Store
 Thumbs.db
-
-# Ambiente locale
-.env.local
-.env.*
