@@ -42,6 +42,20 @@ function createWindow() {
   });
 }
 
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit(); // 👈 Chiude subito la seconda istanza
+} else {
+  app.on('second-instance', () => {
+    // Se l'utente riapre, mostra la finestra già esistente
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
 app.whenReady().then(() => {
   createWindow();
 });
