@@ -8,7 +8,7 @@ const Hero: React.FC = () => {
   return (
     <section className="hero-section">
       <div className='text-center'>
-        <h1>SCARICA IL GESTIONALE</h1>
+        <h1>SCARICA CRISMA</h1>
         <Button
           text="SCARICA ORA"
           onClick={() => window.open("https://github.com/Francescosommellaa/Crisma/releases", "_blank")}
