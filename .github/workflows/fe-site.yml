@@ -20,11 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: apps/fe-site
+        working-directory: ./fe-site
 
       - name: Build project
         run: npm run build
-        working-directory: apps/fe-site
+        working-directory: ./fe-site
 
       - name: Deploy to Vercel
         run: npx vercel --prod --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID --yes
