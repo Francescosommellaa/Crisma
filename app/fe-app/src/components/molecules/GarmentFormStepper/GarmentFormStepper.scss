@@ -56,16 +56,37 @@
     gap: $space-sm;
 
     input {
+      min-width: 80px;
       padding: $space-sm;
       font-size: $font-size-md;
       border: 1px solid $color-gray;
       border-radius: $radius-sm;
       background-color: $color-white;
       transition: border-color 0.2s;
-
+  
       &:focus {
         border-color: $color-accent;
         outline: none;
+      }
+  
+      &.invalid {
+        border: 2px solid red;
+      }
+  
+      &.no-spinner {
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+        }
+      }
+    }
+
+    // Rimuove le frecce dagli input di tipo number
+    .number-clean {
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
       }
     }
   }

@@ -65,8 +65,8 @@ const GarmentsTable: React.FC<Props> = ({
     try {
       const payload: Partial<Garment> = {
         ...formData,
-        tm: formData.tm?.padStart(3, '0'),
-        tm2: formData.tm2?.padStart(3, '0'),
+        tm: formData.tm !== undefined && formData.tm !== '' ? String(formData.tm).padStart(3, '0') : undefined,
+        tm2: formData.tm2 !== undefined && formData.tm2 !== '' ? String(formData.tm2).padStart(3, '0') : undefined,
         prezzo: formData.prezzo ? +formData.prezzo : undefined,
         prezzoTex: formData.prezzoTex ? +formData.prezzoTex : undefined,
       };
@@ -141,11 +141,24 @@ const GarmentsTable: React.FC<Props> = ({
                   >
                     {editingId === item.idGarment ? (
                       <input
-                        type={key.includes('prezzo') ? 'number' : 'text'}
-                        value={formData[key]?.toString() || ''}
-                        onChange={(e) =>
-                          handleChange(key, key.includes('prezzo') ? +e.target.value : e.target.value)
+                      type={['tm','tm2', 'prezzo', 'prezzoTex'].includes(key) ? 'number' : 'text'}
+                      min={['tm','tm2'].includes(key) ? 0 : undefined}
+                      max={['tm','tm2'].includes(key) ? 999 : undefined}
+                      maxLength={['tm', 'tm2'].includes(key) ? 3 : undefined}
+                      className={['tm','tm2'].includes(key) ? 'number-clean' : ''}
+                      value={formData[key] ?? ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (['tm', 'tm2'].includes(key)) {
+                          if (value === '' || /^\d{0,3}$/.test(value)) {
+                            handleChange(key, value === '' ? '' : +value);
+                          }
+                        } else if (['prezzo', 'prezzoTex'].includes(key)) {
+                          handleChange(key, value === '' ? '' : +value);
+                        } else {
+                          handleChange(key, value);
                         }
+                      }}
                       />
                     ) : (
                       item[key]

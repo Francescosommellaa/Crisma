@@ -78,7 +78,10 @@ const BrandListPage: React.FC = () => {
       <input
         placeholder="Nome"
         value={nome}
-        onChange={(e) => setNome(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          setNome(value.charAt(0).toUpperCase() + value.slice(1));
+        }}
       />
       <input
         placeholder="Abbreviazione"

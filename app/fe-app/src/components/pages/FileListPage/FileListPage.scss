@@ -6,7 +6,7 @@
     margin: 0 auto;
   
     h2 {
-      font-size: $font-size-lg;
+      font-size: 3rem;
       font-weight: 700;
       margin-bottom: $space-md;
   
@@ -23,10 +23,22 @@
   
       select,
       input {
+        width: 120px;
         padding: $space-sm;
         font-size: $font-size-md;
         border: 1px solid $color-gray;
         border-radius: $radius-sm;
+        background-color: $color-white;
+        color: $color-black;
+      }
+      
+      // Rimuove le frecce dagli input di tipo number
+      .number-clean {
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
       }
     }
   

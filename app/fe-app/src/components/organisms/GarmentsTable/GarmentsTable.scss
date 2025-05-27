@@ -97,6 +97,15 @@
           border: 1px solid #ccc;
           border-radius: 4px;
         }
+
+        // Rimuove le frecce dagli input di tipo number
+        .number-clean {
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+        }
       }
     }
   }

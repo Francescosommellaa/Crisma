@@ -6,7 +6,7 @@
     padding: $space-lg;
   
     h2 {
-      font-size: $font-size-lg;
+      font-size: 3.5rem;
       font-weight: 700;
       margin-bottom: $space-md;
     }
@@ -40,7 +40,7 @@
         .brand-item-content {
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
+          align-items: center;
           flex-wrap: wrap;
           gap: $space-sm;
   

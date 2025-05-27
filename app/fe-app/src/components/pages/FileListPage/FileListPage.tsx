@@ -102,6 +102,8 @@ const FileListPage: React.FC = () => {
       <option value="FW">FW</option>
     </select>
     <input
+      type='number'
+      className='number-clean'
       value={anno}
       onChange={(e) => setAnno(e.target.value)}
       placeholder="Anno (es. 25)"
