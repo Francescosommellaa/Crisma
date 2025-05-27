@@ -139,7 +139,7 @@ const GarmentsTable: React.FC<Props> = ({
                     key={key}
                     className={['gestionale', 'marka', 'tm', 'tm2', 'prezzo', 'prezzoTex'].includes(key) ? 'monospace' : ''}
                   >
-                    {editingId === item.idGarment ? (
+                    {editingId === item.idGarment && !['gestionale', 'marka'].includes(key) ? (
                       <input
                       type={['tm','tm2', 'prezzo', 'prezzoTex'].includes(key) ? 'number' : 'text'}
                       min={['tm','tm2'].includes(key) ? 0 : undefined}

@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { readJSON, writeJSON } from '../services/fsService.js';
+import { readJSON, writeJSON, getNextGarmentId } from '../services/fsService.js';
 import { getColorName, saveColorIfMissing} from '../services/colorService.js';
 import { generateCSV } from '../utils/csvExporter.js';
+import { getConfiguredPath } from '../controllers/config.controller.js';
 import {
   normalizeTM,
   generateCodes,
@@ -34,7 +35,9 @@ export const addGarment = async (req: Request, res: Response) => {
     const metadata = await readJSON(...getMetadataPath(abbrev, fileId));
     const garments = (await readJSON(...garmentsPath)) || [];
 
-    const nextId = Math.max(1000, ...garments.map((g: any) => g.idGarment || 999)) + 1;
+    const stagioneAnno = `${metadata.stagione}-${metadata.anno}`;
+    const basePath = await getConfiguredPath();
+    const nextId = await getNextGarmentId(basePath, stagioneAnno);
 
     const { gestionale, marka } = generateCodes(
       abbrev.toUpperCase(),

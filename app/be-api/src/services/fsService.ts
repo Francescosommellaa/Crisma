@@ -128,3 +128,23 @@ export const renameDirectory = async (oldRelative: string, newRelative: string) 
     throw err;
   }
 };
+
+const COUNTERS_FILE = 'garments-counters.json';
+
+export async function getNextGarmentId(rootPath: string, stagioneAnno: string): Promise<number> {
+  const filePath = path.join(rootPath, COUNTERS_FILE);
+
+  let counters: Record<string, number> = {};
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    counters = JSON.parse(content);
+  } catch {
+    counters = {};
+  }
+
+  const current = counters[stagioneAnno] || 1000;
+  counters[stagioneAnno] = current + 1;
+
+  await fs.writeFile(filePath, JSON.stringify(counters, null, 2), 'utf-8');
+  return current;
+}
