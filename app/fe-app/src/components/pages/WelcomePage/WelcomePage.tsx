@@ -49,35 +49,16 @@ const WelcomePage: React.FC = () => {
 
   const handleChooseFolder = async () => {
     try {
-      if (!window.showDirectoryPicker) {
-        alert('Il tuo browser non supporta showDirectoryPicker.');
-        return;
-      }
-
-      const directoryHandle = await window.showDirectoryPicker();
-      const permission = await directoryHandle.requestPermission({ mode: 'readwrite' });
-
-      if (permission !== 'granted') {
-        alert('Permesso negato alla cartella');
-        return;
-      }
-
-      const pathName = directoryHandle.name;
-
-      // ✅ Invio del path al backend
+      const folderPath = await window.api?.chooseDirectory();
+      if (!folderPath) return;
+  
       await axios.post(`${API_URL}/config/set-path`, {
-        path: pathName
+        path: folderPath
       });
-
-      // ✅ Salva localmente per uso futuro
-      localStorage.setItem('savePath', pathName);
-      setSavedPath(pathName);
-
-      // ✅ Test di scrittura
-      const fileHandle = await directoryHandle.getFileHandle('dati.json', { create: true });
-      const writable = await fileHandle.createWritable();
-      await writable.write(JSON.stringify({ test: true }));
-      await writable.close();
+  
+      localStorage.setItem('savePath', folderPath);
+      setSavedPath(folderPath);
+  
     } catch (err) {
       console.error('Errore nella selezione della cartella:', err);
       alert('Errore nella selezione della cartella');

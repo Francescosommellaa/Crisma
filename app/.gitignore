@@ -1,0 +1,22 @@
+# Node
+node_modules/
+dist/
+release/
+
+# Vite
+fe-app/dist/
+fe-app/.vite/
+
+# Electron
+electron/dist/
+
+# Config
+local-config.json
+.env
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

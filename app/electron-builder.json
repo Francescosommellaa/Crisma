@@ -1,0 +1,38 @@
+{
+  "appId": "com.crisma.gestionale",
+  "productName": "Crisma",
+  "files": [
+    "fe-app/dist/**",
+    "be-api/dist/**",
+    "electron/dist/**",
+    "node_modules/cors/**",
+    "package.json"
+  ],
+  "asarUnpack": [
+    "node_modules/express/**",
+    "node_modules/cors/**",
+    "node_modules/dotenv/**",
+    "node_modules/express-validator/**",
+    "node_modules/helmet/**",
+    "node_modules/jsonwebtoken/**",
+    "node_modules/morgan/**",
+    "node_modules/nodemailer/**",
+    "node_modules/pg/**",
+    "node_modules/pg-hstore/**",
+    "node_modules/sequelize/**",
+    "node_modules/bcrypt/**"
+],
+  "extraResources": [],
+  "directories": {
+    "output": "release"
+  },
+  "win": {
+    "target": "nsis",
+    "icon": "./electron/assets/icon.ico"
+  },
+  "nsis": {
+    "allowToChangeInstallationDirectory": true,
+    "oneClick": false,
+    "deleteAppDataOnUninstall": false
+  }
+}

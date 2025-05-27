@@ -1,0 +1,28 @@
+{
+  "name": "crisma-app",
+  "version": "1.0.0",
+  "description": "Gestionale abbigliamento",
+  "author": "Francesco Sommella",
+  "private": true,
+  "workspaces": [
+    "fe-app",
+    "be-api"
+  ],
+  "main": "electron/dist/main.js",
+  "scripts": {
+    "build": "npm run build -w fe-app && npm run build -w be-api && tsc -p electron",
+    "make": "npm run build && electron-builder --config=electron-builder.json",
+    "dev": "concurrently \"npm run dev -w fe-app\" \"npm run dev -w be-api\" \"npm run electron-dev\"",
+    "electron-dev": "tsc -p electron && electron electron/dist/main.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0",
+    "electron": "^27.0.0",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}

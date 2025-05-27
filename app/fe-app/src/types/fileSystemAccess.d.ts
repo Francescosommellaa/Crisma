@@ -21,5 +21,10 @@ declare global {
 
   interface Window {
     showDirectoryPicker?: () => Promise<FileSystemDirectoryHandle>;
+
+    /** Aggiunto per supportare Electron */
+    api?: {
+      chooseDirectory: () => Promise<string | null>;
+    };
   }
 }
