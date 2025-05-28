@@ -1,17 +1,43 @@
-@mixin flex-center {
+// 🔁 Flex center utility
+@mixin flex-center($direction: row, $gap: 0) {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: $direction;
+  gap: $gap;
 }
 
-@mixin button-style {
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  background-color: #1ba869;
-  color: white;
+// 🔘 Pulsante con stile personalizzabile
+@mixin button-style(
+  $bg-color: #1ba869,
+  $text-color: white,
+  $padding: 0.5rem 1rem,
+  $radius: 0.25rem
+) {
+  padding: $padding;
+  border-radius: $radius;
+  background-color: $bg-color;
+  color: $text-color;
   cursor: pointer;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: darken(#1ba869, 10%);
+    background-color: darken($bg-color, 10%);
+    transform: scale(1.03);
+  }
+}
+
+// 📱 Mixin per media queries
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: 480px) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: 768px) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: 992px) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: 1200px) { @content; }
   }
 }

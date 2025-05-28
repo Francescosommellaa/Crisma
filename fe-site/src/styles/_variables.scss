@@ -1,7 +1,21 @@
-$primary-color: blue;
-$secondary-color: #e07736;
-$text-color: #333;
-$font-family: 'Arial', sans-serif;
+// 🎨 Palette colori
+$color-primary: #007bff;         // Blue
+$color-secondary: #e07736;       // Orange
+$color-text-base: #1f2937;       // Grigio scuro per testi
+$color-heading: #111827;         // Quasi nero per heading
+$color-bg: #ffffff;              // Sfondo chiaro
 
-$button-padding: 0.5rem 1rem;
-$border-radius: 0.25rem;
+// 🖋 Tipografia
+$font-family-base: 'Arial', sans-serif;
+
+// 📏 Spaziature
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 2rem;
+
+// 🔘 Componenti UI
+$button-padding: $spacing-sm $spacing-md;
+$radius-sm: 0.25rem;
+$radius-md: 0.5rem;
+$radius-lg: 1rem;

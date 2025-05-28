@@ -1,29 +1,72 @@
 @use "./mixins.scss" as *;
 @use "./variables.scss" as *;
 
+/* Reset e base */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: black;
-  color: white;
+  width: 100vw;
+  font-family: $font-family-base, sans-serif;
+  color: $color-text-base;
+  background-color: $color-bg;
+  line-height: 1.6;
+  overflow-x: hidden;
 }
 
+/* Tipografia */
 h1, h2, h3, h4, h5, h6 {
-  text-align: center;
-  font-weight: bold;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+  color: $color-heading;
 }
 
+h1 {
+  font-size: 3rem;
+}
+h2 {
+  font-size: 2.25rem;
+}
+h3 {
+  font-size: 1.75rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1.25rem;
+}
+h6 {
+  font-size: 1rem;
+}
+
+/* Responsive scaling */
 @media (max-width: 768px) {
   h1 {
     font-size: 2rem;
   }
 
-  h2, h3, h4, h5, h6 {
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
     font-size: 1.5rem;
   }
 
-  body {
-    padding: 0 1rem;
+  h4, h5, h6 {
+    font-size: 1.25rem;
   }
 }
